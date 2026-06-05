@@ -4,6 +4,8 @@ import os
 
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
 
+folderPath = os.path.dirname(os.path.abspath(__file__))
+
 class Jogador(pygame.sprite.Sprite):
     
     def __init__(self, spriteImage, posInicial):
@@ -18,7 +20,7 @@ class Jogador(pygame.sprite.Sprite):
         self.estadoAnimacao = "run"
         self.frameAtual = 0
         self.velocidade = 50
-        self.image = pygame.image.load(os.path.join("projeto", "images", "playerSprites", "climb-0.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
         
