@@ -4,6 +4,7 @@ import os
 
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
 
+clock = pygame.time.Clock()
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
 class Jogador(pygame.sprite.Sprite):
@@ -12,6 +13,7 @@ class Jogador(pygame.sprite.Sprite):
         
         super().__init__()
         
+        self.deltaTime = clock.tick(60)/1000
         self.images = []
         self.sheet = pygame.image.load(spriteImage).convert_alpha()
         sheetSize = self.sheet.get_rect()
@@ -19,24 +21,23 @@ class Jogador(pygame.sprite.Sprite):
         self.animacoes = self.fatiar_spritesheet(self.sheet)
         self.estadoAnimacao = "run"
         self.frameAtual = 0
-        self.velocidade = 50
-        self.image = pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
+        self.velocidade = 200
+        self.image = self.animacoes["run"][2] #pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
         
     
     def fatiar_spritesheet(self,sheet):
-        larguraSprite=32
+        larguraSprite=24
         alturaSprite=24
         animacoes = {"run":[]}
         for linha in range(2):
-            if linha==1:
-                for coluna in range(3):
-                    x = linha*larguraSprite
-                    y = coluna*alturaSprite
-                    sprite = sheet.subsurface(pygame.Rect(x,y, larguraSprite, alturaSprite))
-                    sprite = pygame.transform.scale(sprite, (256, 192))
-                    animacoes["run"].append(sprite)
+            for coluna in range(3):
+                x = larguraSprite*coluna
+                y = alturaSprite*linha
+                sprite = sheet.subsurface(pygame.Rect(x,y, larguraSprite, alturaSprite))
+                sprite = pygame.transform.scale(sprite, (240, 240))
+                animacoes["run"].append(sprite)
         return animacoes
             
     def getDirection(self):
@@ -48,11 +49,13 @@ class Jogador(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
     
     def movimentacao(self):
-        print(self.direction)
-        self.posicao += self.direction * self.velocidade
+        #print(self.direction)
+        self.posicao.x += self.direction.x * self.velocidade * self.deltaTime
+        self.posicao.y += self.direction.y * self.velocidade * self.deltaTime
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
     
     def update(self):
+        self.deltaTime = clock.tick(60)/1000
         self.getDirection()
         self.movimentacao()
