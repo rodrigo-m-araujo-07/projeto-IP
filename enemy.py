@@ -6,15 +6,15 @@ clock = pygame.time.Clock()
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, image):
+    def __init__(self, image, dt):
         
         super().__init__()
-        self.dt = clock.tick(60)/1000
+        self.dt = dt
         self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = 500
         self.rect.centery = 200
-        self.velocidade = 10
+        self.velocidade = 500
         self.direcao = pygame.Vector2()
         self.posicao = pygame.Vector2(self.rect.centerx, self.rect.centery)
         
@@ -31,20 +31,22 @@ class Inimigo(pygame.sprite.Sprite):
             self.posicao.y += self.velocidade
 
         print(self.posicao)"""
+        
+        print(self.posicao)
 
-        if self.posicao.y == 200: #and self.posicao.x not in (500, 1000):
-            self.posicao.x += self.velocidade #* self.dt
-        if self.posicao.y == 600: #and self.posicao.x not in (500, 1000):
-            self.posicao.x -= self.velocidade #* self.dt
-        if self.posicao.x == 500: #and self.posicao.y not in (200, 600):
-            self.posicao.y -= self.velocidade #* self.dt
-        if self.posicao.x == 1000: #and self.posicao.y not in (200, 600):
-            self.posicao.y += self.velocidade #* self.dt
+        if self.posicao.y <= 200 and self.posicao.x <= 1000:
+            self.posicao.x += self.velocidade * self.dt
+        elif self.posicao.y >= 600 and self.posicao.x >= 500:
+            self.posicao.x -= self.velocidade * self.dt
+        if self.posicao.x <= 500 and self.posicao.y >= 200:
+            self.posicao.y -= self.velocidade * self.dt
+        if self.posicao.x >= 1000 and self.posicao.y <= 600:
+            self.posicao.y += self.velocidade * self.dt
 
 
-    def update(self):
+    def update(self, dt):
         self.dir()
-        self.dt = clock.tick(60)/1000
+        self.dt = dt
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
 
@@ -57,15 +59,16 @@ class Inimigo(pygame.sprite.Sprite):
         
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, posicao):
+    def __init__(self, image, posicao, dt):
+        #print("teste 1")
         super().__init__()
-        self.dt = clock.tick(60)/1000
+        self.dt = dt
         self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", "bullet.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = posicao[0]
         self.rect.centery = posicao[1]
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-        self.velocidade = 10
+        self.velocidade = 600
         
 
 
@@ -82,26 +85,27 @@ class Bullet(pygame.sprite.Sprite):
             cos = -cos
             sin = -sin
         
-        
-               
         self.dire = pygame.math.Vector2(math.ceil(cos*self.velocidade), math.ceil(sin*self.velocidade))
         #if (dx, dy) != (0, 0):
           #  self.dire = self.dire.normalize()
        # print(), print(self.dire)
 
     def mov(self):
-        print(self.dire)
-        self.posicao.x += self.dire.x #* self.dt
-        self.posicao.y += self.dire.y #*self.dt
+        #print(self.dire)
+        self.posicao.x += self.dire.x * self.dt
+        self.posicao.y += self.dire.y *self.dt
         #print(self.fix_dir)
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
-        print(self.rect.center)
+        #print(self.rect.center)
 
         
-    def update(self):
+    def update(self, dt):
         self.mov()
-        self.dt = clock.tick(60)/1000
+        self.dt = dt
+        #self.dt = clock.tick(60)/1000
+        #if self.dt>1.0:
+        #    self.dt=1.0
         if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
             self.kill()
             print("Dead")

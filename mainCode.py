@@ -24,9 +24,12 @@ bg = pygame.image.load(os.path.join(folderPath,"images","placeholderBG.png")).co
 bg = pygame.transform.scale(bg, (1360,800))
 bgSize = bg.get_rect()
 
+deltaTime = clock.tick(60)/1000
+
 jogador = Jogador(
         spriteImage=os.path.join(folderPath,'images', 'playerSprites', 'slime_green.png'),
         posInicial=(1360 / 2, 800),
+        dt=deltaTime
         #grupos=self.all_sprites,
         #game=self
     )
@@ -42,7 +45,7 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"))
+enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"), deltaTime)
 
 #variaveis para o disparo da bala
 t_inicio = perf_counter()
@@ -51,6 +54,12 @@ disparo = 1
 
 
 while main:
+    deltaTime = clock.tick(60)/1000
+    if deltaTime>1.0:
+        deltaTime=1.0
+        
+    #print(clock.get_fps())
+        
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
     #ve se fechou o jogo
@@ -70,7 +79,7 @@ while main:
             y = random.randint(200,600)
             itemSpawnado = itemGeral(
                 spriteImage=os.path.join(folderPath,'images', 'itemBase.png'),
-                posInicial=(x, y)
+                posInicial=(x, y),
             )
             grupoItem.add(itemSpawnado)
     
@@ -93,8 +102,10 @@ while main:
     
     
     if disparo:
-        bullet = Bullet(os.path.join(folderPath, "images", "enemy", "bullet.png"),
-                        (enemy.rect.centerx,enemy.rect.centery)
+        bullet = Bullet(
+            os.path.join(folderPath, "images", "enemy", "bullet.png"),
+            (enemy.rect.centerx,enemy.rect.centery),
+            dt=deltaTime
         )
         grupoBullets.add(bullet)
         bullet.direcao((jogador.rect.center), (enemy.rect.center))
@@ -105,9 +116,10 @@ while main:
         t_inicio = int(perf_counter())
     
     #update de tudo
-    grupoJogador.update()
-    grupoInimigo.update()
-    grupoBullets.update()
+    grupoJogador.update(deltaTime)
+    grupoInimigo.update(deltaTime)
+    grupoBullets.update(deltaTime)
+    #print(grupoBullets)
     
     #desenha tudo na tela
     grupoJogador.draw(tela)
