@@ -23,6 +23,7 @@ class Jogador(pygame.sprite.Sprite):
         self.image = pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
+        self.vida = 100
         
     
     def fatiar_spritesheet(self,sheet):
@@ -48,7 +49,7 @@ class Jogador(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
     
     def movimentacao(self):
-        print(self.direction)
+        #print(self.direction)
         self.posicao += self.direction * self.velocidade
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
