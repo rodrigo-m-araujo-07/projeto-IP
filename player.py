@@ -9,11 +9,11 @@ folderPath = os.path.dirname(os.path.abspath(__file__))
 
 class Jogador(pygame.sprite.Sprite):
     
-    def __init__(self, spriteImage, posInicial):
+    def __init__(self, spriteImage, posInicial, dt):
         
         super().__init__()
         
-        self.deltaTime = clock.tick(60)/1000
+        self.deltaTime = dt
         self.images = []
         self.sheet = pygame.image.load(spriteImage).convert_alpha()
         sheetSize = self.sheet.get_rect()
@@ -21,7 +21,7 @@ class Jogador(pygame.sprite.Sprite):
         self.animacoes = self.fatiar_spritesheet(self.sheet)
         self.estadoAnimacao = "run"
         self.frameAtual = 0
-        self.velocidade = 200
+        self.velocidade = 500
         self.image = self.animacoes["run"][2] #pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
@@ -56,7 +56,7 @@ class Jogador(pygame.sprite.Sprite):
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
     
-    def update(self):
-        self.deltaTime = clock.tick(60)/1000
+    def update(self,dt):
+        self.deltaTime = dt
         self.getDirection()
         self.movimentacao()
