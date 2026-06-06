@@ -1,9 +1,10 @@
 import pygame
 import numpy
 from player import Jogador
-from enemy import Inimigo
+from enemy import Inimigo, Bullet
 import sys
 import os
+from time import perf_counter
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 pygame.init() 
@@ -26,12 +27,19 @@ jogador = Jogador(
         #game=self
     )
 
-enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"),
-        (500, 400)
+enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"))
 
-)
+#variaveis para o disparo da bala
+t_inicio = perf_counter()
+disparo = 1
+
+grupoJogador = pygame.sprite.Group()
+grupoInimigo = pygame.sprite.Group()
+grupoBullets = pygame.sprite.Group()
 
 while main:
+    hp = f"Vida: {jogador.vida}"
+    hp_form = fonte.render(hp, False, (255, 255, 255))
     #ve se fechou o jogo
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -47,20 +55,42 @@ while main:
     #limpa tela pra atualizar prox frame
     scaling=5
     tela.blit(bg, bgSize)
-    grupoJogador = pygame.sprite.Group()
+    tela.blit(hp_form, (18, 18))
+    
     grupoJogador.add(jogador)
-    grupoInimigo = pygame.sprite.Group()
+    
     grupoInimigo.add(enemy)
-    #grupoJogador.add(enemy)
+    
+    
+    if disparo:
+        bullet = Bullet(os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                        (enemy.rect.centerx,enemy.rect.centery)
+        )
+        grupoBullets.add(bullet)
+        bullet.direcao((jogador.rect.center), (enemy.rect.center))
+        disparo = 0
+        print("POW")
+    elif int(perf_counter()) - t_inicio >= 2:
+        disparo = 1
+        t_inicio = int(perf_counter())
+    
+
     grupoJogador.update()
     grupoInimigo.update()
+    grupoBullets.update()
+    
     
     grupoJogador.draw(tela)
     grupoInimigo.draw(tela)
+    grupoBullets.draw(tela)
     #flip atualiza a tela
     pygame.display.flip()
     clock.tick(fps)
 
-    colisao = pygame.sprite.spritecollide(jogador, grupoInimigo, False)
-    if colisao: #a lista fica vazia até detectar uma colisão, quando recebe um elemento, entra na condicional
+    colisao_b = pygame.sprite.spritecollide(jogador, grupoBullets, True)
+    colisao_i = jogador.rect.colliderect(enemy.rect)
+    if colisao_b or colisao_i: #a lista fica vazia até detectar uma colisão, quando recebe um elemento, entra na condicional
+        jogador.vida -= 20
+        
+
         
