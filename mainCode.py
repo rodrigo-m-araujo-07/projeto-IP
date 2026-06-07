@@ -62,8 +62,8 @@ disparo = 1
 #Novas variáveis do tiro:
 inicio_de_jogo = perf_counter ()
 
-cooldown_normal = 0.5
-cooldown_especial = 0.15
+cooldown_normal = 1
+cooldown_especial = 0.5
 intervalo_tiro = cooldown_normal
 ultimo_tiro = 0
 powerup_ativo = False
