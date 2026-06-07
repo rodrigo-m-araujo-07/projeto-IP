@@ -32,7 +32,7 @@ class Inimigo(pygame.sprite.Sprite):
 
         print(self.posicao)"""
         
-        print(self.posicao)
+        #print(self.posicao)
 
         if self.posicao.y <= 200 and self.posicao.x <= 1000:
             self.posicao.x += self.velocidade * self.dt

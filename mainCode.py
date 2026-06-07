@@ -48,8 +48,10 @@ main = True
 enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"), deltaTime)
 
 #variaveis para o disparo da bala
-t_inicio = perf_counter()
+t_disparo = perf_counter()
 disparo = 1
+
+
 
 
 
@@ -95,12 +97,6 @@ while main:
     grupoInimigo.add(enemy)
     
     
-    
-    
-    
-    
-    
-    
     if disparo:
         bullet = Bullet(
             os.path.join(folderPath, "images", "enemy", "bullet.png"),
@@ -111,9 +107,9 @@ while main:
         bullet.direcao((jogador.rect.center), (enemy.rect.center))
         disparo = 0
         print("POW")
-    elif int(perf_counter()) - t_inicio >= 3:
+    elif perf_counter() - t_disparo >= 3:
         disparo = 1
-        t_inicio = int(perf_counter())
+        t_disparo = perf_counter()
     
     #update de tudo
     grupoJogador.update(deltaTime)
@@ -132,8 +128,18 @@ while main:
 
     colisao_b = pygame.sprite.spritecollide(jogador, grupoBullets, True)
     colisao_i = jogador.rect.colliderect(enemy.rect)
-    if colisao_b or colisao_i: #a lista fica vazia até detectar uma colisão, quando recebe um elemento, entra na condicional
+    if (colisao_b or colisao_i) and not jogador.invencibilidade: #a lista fica vazia até detectar uma colisão, quando recebe um elemento, entra na condicional
         jogador.vida -= 20
+        jogador.dano_update()
+        t_invencibilidade = perf_counter()
+        
+
+    if jogador.invencibilidade and (perf_counter() - t_invencibilidade) >= 3:
+        jogador.dano_update()
+
+
+    
+
         
 
         
