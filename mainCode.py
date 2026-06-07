@@ -5,8 +5,10 @@ from enemy import Inimigo, Bullet
 import sys
 import os
 import random
-from itens import itemGeral, ParteEscudo, PowerUP
+from itens import itemGeral, ParteEscudo, PowerUP, Moedas, Cura
 from time import perf_counter
+
+
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 pygame.init() 
@@ -43,6 +45,11 @@ pygame.time.set_timer(create_powerup, 6000)
 
 timerItem = pygame.time.set_timer(createItem, 3000)
 
+create_Moeda = pygame.USEREVENT + 3
+pygame.time.set_timer(create_Moeda, 2000)
+create_Cura = pygame.USEREVENT + 4
+pygame.time.set_timer(create_Cura, 3000)
+
 #cria grupos
 grupoItem = pygame.sprite.Group()
 grupoEscudo = pygame.sprite.Group()
@@ -50,6 +57,8 @@ grupoPowerUP = pygame.sprite.Group()
 grupoJogador = pygame.sprite.Group()
 grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
+grupoMoedas = pygame.sprite.Group()
+grupoCura =  pygame.sprite.Group()
 
 main = True
 enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"), deltaTime)
@@ -57,6 +66,9 @@ enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.
 #variaveis para o disparo da bala
 t_disparo = perf_counter()
 disparo = 1
+
+# qtd. moedas inicial
+jogador.moedas = 0
 
 
 
@@ -70,6 +82,11 @@ while main:
         
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
+
+    coin = f"Moedas : {jogador.moedas}"
+    coin_form = fonte.render(coin, False, (255, 255, 255))
+
+
     #ve se fechou o jogo
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -103,13 +120,46 @@ while main:
                 y = random.randint(200,600)
                 grupoEscudo.add(PospriteImage=os.path.join(folderPath,'images', 'PowerUP.png'),
                     posInicial=(x, y),)
+        if event.type == create_Cura:
+            x = random.randint(200,1100)
+            y = random.randint(200,600)
+            cura = Cura(spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
+        posInicial=(x, y)
+        )
+            
+            grupoItem.add(cura)
+        if event.type == create_Moeda:
+            x = random.randint(200,1100)
+            y = random.randint(200,600)
+            moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
+                posInicial=(x, y),)
+            grupoItem.add(moeda)
+
+
+
 
     #colisão player item
-    pygame.sprite.spritecollide(jogador, grupoItem, True)
+    colisoes = pygame.sprite.spritecollide(jogador, grupoItem, True)
+
+
+    for item in colisoes:
+
+        # identifica o tipo de item recebido
+        if isinstance(item, Moedas):
+            jogador.moedas += item.valor
+            print('Moeda recebida')
+
+        elif isinstance(item, Cura):
+            jogador.vida += item.valor
+
+
     
+
+
     #limpa tela pra atualizar prox frame
     tela.blit(bg, bgSize)
     tela.blit(hp_form, (18, 18))
+    tela.blit(coin_form, (200, 18))
     
     #criar personagens
     grupoJogador.add(jogador)
