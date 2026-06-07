@@ -26,6 +26,7 @@ class Jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
         self.vida = 100
+        self.escudo = 0
         
     
     def fatiar_spritesheet(self,sheet):

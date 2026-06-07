@@ -5,7 +5,7 @@ from enemy import Inimigo, Bullet
 import sys
 import os
 import random
-from itens import itemGeral
+from itens import itemGeral, ParteEscudo, PowerUP
 from time import perf_counter
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
@@ -36,10 +36,17 @@ jogador = Jogador(
 
 createItem = 999
 
+create_escudo = pygame.USEREVENT + 1
+pygame.time.set_timer(create_escudo, 2000)
+create_powerup = pygame.USEREVENT + 2
+pygame.time.set_timer(create_powerup, 6000)
+
 timerItem = pygame.time.set_timer(createItem, 3000)
 
 #cria grupos
 grupoItem = pygame.sprite.Group()
+grupoEscudo = pygame.sprite.Group()
+grupoPowerUP = pygame.sprite.Group()
 grupoJogador = pygame.sprite.Group()
 grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
@@ -50,7 +57,6 @@ enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.
 #variaveis para o disparo da bala
 t_inicio = perf_counter()
 disparo = 1
-
 
 
 while main:
@@ -82,7 +88,20 @@ while main:
                 posInicial=(x, y),
             )
             grupoItem.add(itemSpawnado)
-    
+        if event.type == grupoEscudo:
+            print("escudo")
+            x = random.randint(200,1100)
+            y = random.randint(200,600)
+            grupoEscudo.add(spriteImage=os.path.join(folderPath,'images', 'Escudo.png'),
+                posInicial=(x, y),)
+        if event.type == grupoPowerUP:
+            if len(grupoPowerUP) == 0:
+                print("PowerUP")
+                x = random.randint(200,1100)
+                y = random.randint(200,600)
+                grupoEscudo.add(PospriteImage=os.path.join(folderPath,'images', 'PowerUP.png'),
+                    posInicial=(x, y),)
+
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
