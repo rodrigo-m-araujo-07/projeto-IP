@@ -1,6 +1,6 @@
 import pygame
 import numpy
-from player import Jogador
+from player import Jogador, Bala
 from enemy import Inimigo, Bullet
 import sys
 import os
@@ -37,7 +37,7 @@ jogador = Jogador(
 createItem = 999
 
 create_escudo = pygame.USEREVENT + 1
-pygame.time.set_timer(create_escudo, 2000)
+pygame.time.set_timer(create_escudo, 4000)
 create_powerup = pygame.USEREVENT + 2
 pygame.time.set_timer(create_powerup, 6000)
 
@@ -47,6 +47,7 @@ timerItem = pygame.time.set_timer(createItem, 3000)
 grupoItem = pygame.sprite.Group()
 grupoEscudo = pygame.sprite.Group()
 grupoPowerUP = pygame.sprite.Group()
+grupoBala = pygame.sprite.Group()
 grupoJogador = pygame.sprite.Group()
 grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
@@ -58,18 +59,45 @@ enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.
 t_disparo = perf_counter()
 disparo = 1
 
+#Novas variáveis do tiro:
+inicio_de_jogo = perf_counter ()
 
+cooldown_normal = 0.5
+cooldown_especial = 0.15
+intervalo_tiro = cooldown_normal
+ultimo_tiro = 0
+powerup_ativo = False
+powerup_t_inicio = 0
+duracao =  5
 
+#Mudei a criação dos personagens pra fora do loop main pra poder fazer com que o inimigo morre
+#criar personagens
+grupoJogador.add(jogador)
+grupoInimigo.add(enemy)
+    
 
 while main:
     deltaTime = clock.tick(60)/1000
     if deltaTime>1.0:
         deltaTime=1.0
+    #Salvar tecla apertada
+    tecla = pygame.key.get_pressed()
         
     #print(clock.get_fps())
         
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
+
+    #HUD do escudo
+    escudo = f"Escudo: {jogador.escudo}/4"
+    escudo_form = fonte.render(escudo, False, (100,180,255))
+
+    #HUD do tempo 
+    tempo_de_jogo = perf_counter () - inicio_de_jogo
+    timer = fonte.render(f"{tempo_de_jogo:.1f}s", False, (255, 255, 255))
+    rect_timer = timer.get_rect()
+    rect_timer.center = (680, 50)
+
     #ve se fechou o jogo
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -90,50 +118,105 @@ while main:
                 posInicial=(x, y),
             )
             grupoItem.add(itemSpawnado)
-        if event.type == grupoEscudo:
+#Criar o escudo:
+        if event.type == create_escudo:
             print("escudo")
             x = random.randint(200,1100)
             y = random.randint(200,600)
-            grupoEscudo.add(spriteImage=os.path.join(folderPath,'images', 'Escudo.png'),
-                posInicial=(x, y),)
-        if event.type == grupoPowerUP:
+            escudoSpawnado = ParteEscudo(
+                spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
+                posInicial=(x, y))
+            
+            grupoEscudo.add(escudoSpawnado)
+
+#Criar o powerUP:
+        if event.type == create_powerup:
             if len(grupoPowerUP) == 0:
                 print("PowerUP")
                 x = random.randint(200,1100)
                 y = random.randint(200,600)
-                grupoEscudo.add(PospriteImage=os.path.join(folderPath,'images', 'PowerUP.png'),
-                    posInicial=(x, y),)
-
+                powerupSpawnado = PowerUP(
+                    spriteImage=os.path.join(folderPath,'images', 'Items', 'PoweUP.png'),
+                    posInicial=(x, y),
+                )
+                grupoPowerUP.add(powerupSpawnado)
+    
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
+#Escudo coletado:
+    escudo_coletados = []
+    for escudo in grupoEscudo:
+        if jogador.hitbox.colliderect(escudo.rect):
+            escudo_coletados.append(escudo)
+            escudo.kill()
+
+    for i in escudo_coletados:
+        jogador.escudo += 1
+        if jogador.escudo >= 4:
+            jogador.vida += 25
+            jogador.escudo = 0
+
+#PowerUP coletado:
+    powerup_coletados = []
+    for powerup in grupoPowerUP:
+        if jogador.hitbox.colliderect(powerup.rect):
+            powerup_coletados.append(powerup)
+            powerup.kill()
+    if powerup_coletados:
+        powerup_ativo = True
+        powerup_t_inicio = perf_counter()
+        intervalo_tiro = cooldown_especial
+
+#Power UP ativado:
+    if powerup_ativo:
+        tempo_passado = perf_counter() - powerup_t_inicio
+        if tempo_passado >= 5: #dura 5 segundos
+            powerup_ativo = False
+            intervalo_tiro = cooldown_normal
+
     #limpa tela pra atualizar prox frame
     tela.blit(bg, bgSize)
     tela.blit(hp_form, (18, 18))
-    
-    #criar personagens
-    grupoJogador.add(jogador)
-    grupoInimigo.add(enemy)
-    
-    
-    if disparo:
-        bullet = Bullet(
-            os.path.join(folderPath, "images", "enemy", "bullet.png"),
-            (enemy.rect.centerx,enemy.rect.centery),
-            dt=deltaTime
-        )
-        grupoBullets.add(bullet)
-        bullet.direcao((jogador.rect.center), (enemy.rect.center))
-        disparo = 0
-        print("POW")
-    elif perf_counter() - t_disparo >= 3:
-        disparo = 1
-        t_disparo = perf_counter()
+#Colocar as novas HUDs na tela:
+    tela.blit(escudo_form, (18, 68))
+    tela.blit(timer, rect_timer)
+
+    #Tiro do jogador 
+    if tecla[pygame.K_SPACE]:
+        if perf_counter() - ultimo_tiro >= intervalo_tiro:
+            projetil = Bala(
+                os.path.join(folderPath,"images","enemy","bullet.png"),jogador.rect.center,dt=deltaTime)
+
+            projetil.dire = pygame.math.Vector2(0, -projetil.velocidade)
+
+            grupoBala.add(projetil)
+
+            ultimo_tiro = perf_counter()
+
+    #Só funcionar se o inimigo ainda estiver vivo
+    if enemy.alive():
+        if disparo:
+            bullet = Bullet(
+                os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                (enemy.rect.centerx,enemy.rect.centery),
+                dt=deltaTime
+            )
+            grupoBullets.add(bullet)
+            bullet.direcao((jogador.rect.center), (enemy.rect.center))
+            disparo = 0
+            print("POW")
+        elif perf_counter() - t_disparo >= 3:
+            disparo = 1
+            t_disparo = perf_counter()
     
     #update de tudo
     grupoJogador.update(deltaTime)
     grupoInimigo.update(deltaTime)
     grupoBullets.update(deltaTime)
+    grupoBala.update(deltaTime)
+    grupoPowerUP.update(deltaTime)
+    grupoEscudo.update(deltaTime)
     #print(grupoBullets)
     
     #desenha tudo na tela
@@ -141,11 +224,23 @@ while main:
     grupoItem.draw(tela)
     grupoInimigo.draw(tela)
     grupoBullets.draw(tela)
+    grupoBala.draw(tela)
+    grupoPowerUP.draw(tela)
+    grupoEscudo.draw(tela) 
     
 
-    colisao_b = pygame.sprite.spritecollide(jogador, grupoBullets, True)
-    colisao_i = jogador.rect.colliderect(enemy.rect)
-    if (colisao_b or colisao_i) and not jogador.invencibilidade: #a lista fica vazia até detectar uma colisão, quando recebe um elemento, entra na condicional
+#Colisão do disparo do inimigo com a hitbox do player
+    colisao_b = False
+    for bala in grupoBullets:
+        if jogador.hitbox.colliderect(bala.rect):
+            bala.kill()
+            colisao_b = True
+#Colisão dos disparos do inimigo com a hitbox do player
+    colisao_i = False
+    for vilao in grupoInimigo:
+        if jogador.hitbox.colliderect(enemy.rect):
+            colisao_i = True
+    if (colisao_b or colisao_i) and not jogador.invencibilidade: #as variáveis ficam falsas até detectarem uma colisão, quando recebe um elemento, entra na condicional
         jogador.vida -= 20
         jogador.dano_update()
         t_invencibilidade = perf_counter()
@@ -162,6 +257,15 @@ while main:
 
     if jogador.invencibilidade and (perf_counter() - t_invencibilidade) >= 3:
         jogador.dano_update()
+
+    #Colisão tiro dos players com o inimigo e sua morte:
+    print(f"Inimigo: {enemy.vida}")
+    colisao_inimigo = pygame.sprite.spritecollide(enemy, grupoBala, True)
+    if colisao_inimigo:
+        enemy.vida -= 20
+        print(f"Inimigo: {enemy.vida}")
+    if enemy.vida <= 0:
+        enemy.kill()
 
     #flip atualiza a tela
     pygame.display.flip()
