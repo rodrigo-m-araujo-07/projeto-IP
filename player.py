@@ -26,6 +26,8 @@ class Jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
         self.vida = 100
+        self.invencibilidade = False
+        self.tempoPiscar = 0.5
         self.escudo = 0
         
     
@@ -33,13 +35,16 @@ class Jogador(pygame.sprite.Sprite):
         larguraSprite=24
         alturaSprite=24
         animacoes = {"run":[]}
-        for linha in range(2):
-            for coluna in range(3):
+        for linha in range(3):
+            for coluna in range(4):
                 x = larguraSprite*coluna
                 y = alturaSprite*linha
                 sprite = sheet.subsurface(pygame.Rect(x,y, larguraSprite, alturaSprite))
                 sprite = pygame.transform.scale(sprite, (240, 240))
                 animacoes["run"].append(sprite)
+                print(animacoes), print()
+
+        #print(animacoes)
         return animacoes
             
     def getDirection(self):
@@ -57,6 +62,24 @@ class Jogador(pygame.sprite.Sprite):
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
     
+    def dano_update(self):
+        self.image_update()
+        if self.invencibilidade:
+            self.invencibilidade = False
+            
+        else:
+            self.invencibilidade = True
+        print(self.invencibilidade)
+
+    def image_update(self):
+        if self.invencibilidade:
+            self.image = self.animacoes["run"][2]
+            print("vermelho")
+        else:
+            self.image = self.animacoes["run"][10]
+            print("verde")
+
+
     def update(self,dt):
         self.deltaTime = dt
         self.getDirection()
