@@ -27,6 +27,7 @@ class Jogador(pygame.sprite.Sprite):
         self.posicao = pygame.math.Vector2(self.rect.center)
         self.vida = 100
         self.invencibilidade = False
+        self.tempoPiscar = 0.5
         
     
     def fatiar_spritesheet(self,sheet):

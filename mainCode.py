@@ -118,13 +118,12 @@ while main:
     #print(grupoBullets)
     
     #desenha tudo na tela
-    grupoJogador.draw(tela)
+    #grupoJogador.draw(tela)
     grupoItem.draw(tela)
     grupoInimigo.draw(tela)
     grupoBullets.draw(tela)
-    #flip atualiza a tela
-    pygame.display.flip()
-    clock.tick(fps)
+    
+    
 
     colisao_b = pygame.sprite.spritecollide(jogador, grupoBullets, True)
     colisao_i = jogador.rect.colliderect(enemy.rect)
@@ -132,10 +131,23 @@ while main:
         jogador.vida -= 20
         jogador.dano_update()
         t_invencibilidade = perf_counter()
-        
+        t_clicks = perf_counter()
+
+    if not jogador.invencibilidade:
+        grupoJogador.draw(tela)
+        print("OK")
+    else:
+        if perf_counter() - t_clicks < jogador.tempoPiscar:
+            grupoJogador.draw(tela)
+        else:
+            t_clicks = perf_counter()
 
     if jogador.invencibilidade and (perf_counter() - t_invencibilidade) >= 3:
         jogador.dano_update()
+
+    #flip atualiza a tela
+    pygame.display.flip()
+    clock.tick(fps)
 
 
     
