@@ -1,5 +1,5 @@
 import pygame
-import numpy
+import math
 from player import Jogador, Bala
 from enemy import Inimigo, Bullet
 import sys
@@ -13,22 +13,27 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
+bgHeight = 800
+bgWidth = 1360
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
-telaSizePlaceholder = (1360,800)
+telaSizePlaceholder = (bgWidth,bgHeight)
 tela = pygame.display.set_mode(telaSizePlaceholder)
 pygame.display.set_caption("nome do jogo") #alterar para o nome do jogo dps
 fonte = pygame.font.SysFont("arial", 40, True, False)
 fps=60
 
 bg = pygame.image.load(os.path.join(folderPath,"images","placeholderBG.png")).convert()
-bg = pygame.transform.scale(bg, (1360,800))
+bg = pygame.transform.scale(bg, (bgWidth,bgHeight))
 bgSize = bg.get_rect()
+
+scroll=0
+tiles = math.ceil(bgHeight/bg.get_height())+2
 
 deltaTime = clock.tick(60)/1000
 
 jogador = Jogador(
         spriteImage=os.path.join(folderPath,'images', 'playerSprites', 'slime_green.png'),
-        posInicial=(1360 / 2, 800),
+        posInicial=(1360 / 2, 600),
         dt=deltaTime
         #grupos=self.all_sprites,
         #game=self
@@ -81,10 +86,9 @@ while main:
     if deltaTime>1.0:
         deltaTime=1.0
     #Salvar tecla apertada
-    tecla = pygame.key.get_pressed()
-        
-    #print(clock.get_fps())
-        
+    tecla = pygame.key.get_pressed()    
+    
+    #vida    
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
 
@@ -175,10 +179,18 @@ while main:
             powerup_ativo = False
             intervalo_tiro = cooldown_normal
 
-    #limpa tela pra atualizar prox frame
-    tela.blit(bg, bgSize)
-    tela.blit(hp_form, (18, 18))
+#background scrolling
+    appender=0
+    while(appender<tiles):
+        tela.blit(bg, (0, -bg.get_height()*appender+scroll))
+        appender+=1
+    scroll+=6
+#reset scrolling
+    if abs(scroll)>bg.get_height():
+        scroll=0
+        
 #Colocar as novas HUDs na tela:
+    tela.blit(hp_form, (18, 18))
     tela.blit(escudo_form, (18, 68))
     tela.blit(timer, rect_timer)
 
@@ -268,6 +280,7 @@ while main:
         enemy.kill()
 
     #flip atualiza a tela
+    pygame.display.update()
     pygame.display.flip()
     clock.tick(fps)
 
