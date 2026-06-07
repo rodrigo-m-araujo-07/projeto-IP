@@ -24,8 +24,8 @@ class itemGeral(pygame.sprite.Sprite):
         self.rect.centery = self.posicao.y
         
     def fatiar_spritesheet(self,sheet):
-        larguraSprite=32
-        alturaSprite=32
+        larguraSprite=16
+        alturaSprite=16
         animacoes = {"blink":[]}
         for linha in range(1):
             for coluna in range(1):
