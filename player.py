@@ -8,6 +8,8 @@ import math
 clock = pygame.time.Clock()
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
+tamanhoMapa = (1360,800)
+
 class Jogador(pygame.sprite.Sprite):
     
     def __init__(self, spriteImage, posInicial, dt):
@@ -61,9 +63,14 @@ class Jogador(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
     
     def movimentacao(self):
-        #print(self.direction)
-        self.posicao.x += self.direction.x * self.velocidade * self.deltaTime
-        self.posicao.y += self.direction.y * self.velocidade * self.deltaTime
+        print("pos", self.posicao)
+        print("rect", self.rect)
+        nextPosX = self.posicao.x + self.direction.x * self.velocidade * self.deltaTime
+        nextPosY = self.posicao.y + self.direction.y * self.velocidade * self.deltaTime
+        if nextPosX >= self.rect[2]/3 and nextPosX <= tamanhoMapa[0]-self.rect[2]/3:
+            self.posicao.x = nextPosX
+        if nextPosY >= self.rect[3]/4 and nextPosY <= tamanhoMapa[1]-self.rect[3]/4:
+            self.posicao.y = nextPosY
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
         #Hitbox 2:
