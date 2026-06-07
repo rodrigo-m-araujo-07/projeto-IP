@@ -63,7 +63,7 @@ disparo = 1
 inicio_de_jogo = perf_counter ()
 
 cooldown_normal = 1
-cooldown_especial = 0.5
+cooldown_especial = 0.25
 intervalo_tiro = cooldown_normal
 ultimo_tiro = 0
 powerup_ativo = False
