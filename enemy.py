@@ -17,6 +17,7 @@ class Inimigo(pygame.sprite.Sprite):
         self.velocidade = 500
         self.direcao = pygame.Vector2()
         self.posicao = pygame.Vector2(self.rect.centerx, self.rect.centery)
+        self.vida = 100
         
 
     def dir(self):

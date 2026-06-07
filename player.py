@@ -1,6 +1,7 @@
 import pygame
 import numpy
 import os
+import math
 
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
 
@@ -24,6 +25,10 @@ class Jogador(pygame.sprite.Sprite):
         self.velocidade = 500
         self.image = self.animacoes["run"][2] #pygame.image.load(os.path.join(folderPath, "images", "playerSprites", "climb-0.png")).convert_alpha()
         self.rect = self.image.get_rect()
+        #Criando a hitbox:
+        self.hitbox = pygame.Rect(0, 0, 100, 100)
+        self.rect.center = posInicial
+        self.hitbox.center = posInicial
         self.posicao = pygame.math.Vector2(self.rect.center)
         self.vida = 100
         self.invencibilidade = False
@@ -61,6 +66,8 @@ class Jogador(pygame.sprite.Sprite):
         self.posicao.y += self.direction.y * self.velocidade * self.deltaTime
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
+        #Hitbox 2:
+        self.hitbox.center = self.rect.center
     
     def dano_update(self):
         self.image_update()
@@ -84,3 +91,55 @@ class Jogador(pygame.sprite.Sprite):
         self.deltaTime = dt
         self.getDirection()
         self.movimentacao()
+#Bala do player:
+class Bala(pygame.sprite.Sprite):
+    def __init__(self, image, posicao, dt):
+        #print("teste 1")
+        super().__init__()
+        self.dt = dt
+        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", "bullet.png")).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = posicao[0]
+        self.rect.centery = posicao[1]
+        self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
+        self.velocidade = 600
+        self.dire = pygame.math.Vector2(0, 0)
+        
+        
+    def direcao(self, posA, posB):
+        #print(posA)
+       # print()
+       # print(posB)
+        dx = (posA[0] - posB[0])
+        dy = (posA[1] - posB[1])
+        ang = (math.atan(dy/dx))
+        cos = math.cos(ang)
+        sin = math.sin(ang)
+        if (dx <=0 and dy <= 0) or (dy >= 0 and dx<=0): #caso precise inverter alguma coordenada
+            cos = -cos
+            sin = -sin
+        
+        self.dire = pygame.math.Vector2(math.ceil(cos*self.velocidade), math.ceil(sin*self.velocidade))
+        #if (dx, dy) != (0, 0):
+          #  self.dire = self.dire.normalize()
+       # print(), print(self.dire)
+
+    def mov(self):
+        #print(self.dire)
+        self.posicao.x += self.dire.x * self.dt
+        self.posicao.y += self.dire.y *self.dt
+        #print(self.fix_dir)
+        self.rect.centerx = self.posicao.x
+        self.rect.centery = self.posicao.y
+        #print(self.rect.center)
+
+        
+    def update(self, dt):
+        self.mov()
+        self.dt = dt
+        #self.dt = clock.tick(60)/1000
+        #if self.dt>1.0:
+        #    self.dt=1.0
+        if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
+            self.kill()
+            print("Dead")
