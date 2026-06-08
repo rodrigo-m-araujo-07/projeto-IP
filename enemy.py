@@ -5,19 +5,30 @@ clock = pygame.time.Clock()
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
+imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png")
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, image, dt):
+    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial):
         
         super().__init__()
         self.dt = dt
-        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", imagens[i])).convert_alpha()
         self.rect = self.image.get_rect()
-        self.rect.centerx = 500
-        self.rect.centery = 200
-        self.velocidade = 500
+        self.rect.centerx = pos[0]
+        self.rect.centery = pos[1]
+        self.velocidadex = velocidade[0]
+        self.velocidadey = velocidade[1]
         self.direcao = pygame.Vector2()
         self.posicao = pygame.Vector2(self.rect.centerx, self.rect.centery)
-        self.vida = 200
+        self.vida = vida
+        self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
+        self.sentido_inicial = sentido_inicial
+
+
+    def _mudar_sentido(self):
+        if self.sentido_inicial == "R":
+            self.sentido_inicial = "L"
+        elif self.sentido_inicial == "L":
+            self.sentido_inicial = "R"
         
 
     def dir(self):
@@ -34,15 +45,38 @@ class Inimigo(pygame.sprite.Sprite):
         print(self.posicao)"""
         
         #print(self.posicao)
+        if self.velocidadex != 0 and self.velocidadey!=0:
+            if self.posicao.y <= self.limites_mov[2] and self.posicao.x <= self.limites_mov[1]:
+                self.posicao.x += self.velocidadex * self.dt
+            elif self.posicao.y >= self.limites_mov[3] and self.posicao.x >= self.limites_mov[0]:
+                self.posicao.x -= self.velocidadex * self.dt
+            elif self.posicao.x <= self.limites_mov[0] and self.posicao.y >= self.limites_mov[2]:
+                self.posicao.y -= self.velocidadey * self.dt
+            elif self.posicao.x >= self.limites_mov[1] and self.posicao.y <= self.limites_mov[3]:
+                self.posicao.y += self.velocidadey * self.dt
 
-        if self.posicao.y <= 200 and self.posicao.x <= 1000:
-            self.posicao.x += self.velocidade * self.dt
-        elif self.posicao.y >= 600 and self.posicao.x >= 500:
-            self.posicao.x -= self.velocidade * self.dt
-        if self.posicao.x <= 500 and self.posicao.y >= 200:
-            self.posicao.y -= self.velocidade * self.dt
-        if self.posicao.x >= 1000 and self.posicao.y <= 600:
-            self.posicao.y += self.velocidade * self.dt
+        elif self.velocidadex != 0:
+            if self.posicao.x >= self.limites_mov[1]:
+                self._mudar_sentido()
+            elif self.posicao.x <= self.limites_mov[0]:
+                self._mudar_sentido()
+            
+            if self.sentido_inicial == "R":
+                self.posicao.x += self.velocidadex * self.dt
+            elif self.sentido_inicial == "L":
+                self.posicao.x -= self.velocidadex * self.dt
+
+        elif self.velocidadey != 0:
+            if self.posicao.y >= self.limites_mov[1]:
+                self._mudar_sentido()
+            elif self.posicao.y <= self.limites_mov[0]:
+                self._mudar_sentido()
+            
+            if self.sentido_inicial == "R":
+                self.posicao.y += self.velocidadex * self.dt
+            elif self.sentido_inicial == "L":
+                self.posicao.y -= self.velocidadex * self.dt
+
 
 
     def update(self, dt):

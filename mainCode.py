@@ -65,7 +65,8 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy = Inimigo(os.path.join(folderPath, "images", "enemy", "retangulo_vermelho.png"), deltaTime)
+enemy01 = Inimigo(0, deltaTime, (670, 200), (500, 500), 200, (500, 1000, 200, 600), "0")
+enemy02 = Inimigo(1, deltaTime, (600, 180), (300, 0), 300, (200, 1000, 180, 180), "R")
 
 #variaveis para o disparo da bala
 t_disparo = perf_counter()
@@ -88,7 +89,8 @@ duracao =  5
 #Mudei a criação dos personagens pra fora do loop main pra poder fazer com que o inimigo morre
 #criar personagens
 grupoJogador.add(jogador)
-grupoInimigo.add(enemy)
+grupoInimigo.add(enemy01)
+grupoInimigo.add(enemy02)
     
 
 while main:
@@ -274,15 +276,15 @@ while main:
             ultimo_tiro = perf_counter()
 
     #Só funcionar se o inimigo ainda estiver vivo
-    if enemy.alive():
+    if enemy01.alive():
         if disparo:
             bullet = Bullet(
                 os.path.join(folderPath, "images", "enemy", "bullet.png"),
-                (enemy.rect.centerx,enemy.rect.centery),
+                (enemy01.rect.centerx,enemy01.rect.centery),
                 dt=deltaTime
             )
             grupoBullets.add(bullet)
-            bullet.direcao((jogador.rect.center), (enemy.rect.center))
+            bullet.direcao((jogador.rect.center), (enemy01.rect.center))
             disparo = 0
             print("POW")
         elif perf_counter() - t_disparo >= 3:
@@ -321,7 +323,7 @@ while main:
 #Colisão dos disparos do inimigo com a hitbox do player
     colisao_i = False
     for vilao in grupoInimigo:
-        if jogador.hitbox.colliderect(enemy.rect):
+        if jogador.hitbox.colliderect(enemy01.rect):
             colisao_i = True
     if (colisao_b or colisao_i) and not jogador.invencibilidade: #as variáveis ficam falsas até detectarem uma colisão, quando recebe um elemento, entra na condicional
         jogador.vida -= 20
@@ -342,13 +344,13 @@ while main:
         jogador.dano_update()
 
     #Colisão tiro dos players com o inimigo e sua morte:
-    print(f"Inimigo: {enemy.vida}")
-    colisao_inimigo = pygame.sprite.spritecollide(enemy, grupoBala, True)
+    print(f"Inimigo: {enemy01.vida}")
+    colisao_inimigo = pygame.sprite.spritecollide(enemy01, grupoBala, True)
     if colisao_inimigo:
-        enemy.vida -= 20
-        print(f"Inimigo: {enemy.vida}")
-    if enemy.vida <= 0:
-        enemy.kill()
+        enemy01.vida -= 20
+        print(f"Inimigo: {enemy01.vida}")
+    if enemy01.vida <= 0:
+        enemy01.kill()
 
     #flip atualiza a tela
     pygame.display.update()
