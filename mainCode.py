@@ -162,7 +162,7 @@ while main:
             x = random.randint(200,1100)
             y = random.randint(200,600)
             cura = Cura(
-                spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
+                spriteImage=os.path.join(folderPath, 'images','Items', 'heart pixel art 32x32.png'),
                 posInicial=(x, y)
             )
             grupoCura.add(cura)
@@ -170,7 +170,7 @@ while main:
         if event.type == create_Moeda:
             x = random.randint(200,1100)
             y = random.randint(200,600)
-            moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
+            moeda = Moedas(spriteImage=os.path.join(folderPath,'images','Items', 'coin 2.png'),
                 posInicial=(x, y),)
             grupoMoeda.add(moeda)
     #colisão player item
