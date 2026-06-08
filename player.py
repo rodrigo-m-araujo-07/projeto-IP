@@ -35,6 +35,7 @@ class Jogador(pygame.sprite.Sprite):
         self.invencibilidade = False
         self.tempoPiscar = 0.5
         self.escudo = 0
+        self.armadura = 0
         
     
     def fatiar_spritesheet(self,sheet):

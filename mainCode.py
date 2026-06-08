@@ -103,8 +103,11 @@ while main:
     hp_form = fonte.render(hp, False, (255, 255, 255))
 
     #HUD do escudo
-    escudo = f"Escudo: {jogador.escudo}/4"
-    escudo_form = fonte.render(escudo, False, (100,180,255))
+    pedacos = f"Pedaços: {jogador.escudo}/4"
+    pedacos_form = fonte.render(pedacos, False, (100,180,255))
+    #HUD do escudo
+    escudos = f"Escudo: {jogador.armadura}"
+    escudos_form = fonte.render(escudos, False, (100,180,255))
     
     coin = f"Moedas : {jogador.moedas}"
     coin_form = fonte.render(coin, False, (255, 255, 255))
@@ -181,18 +184,18 @@ while main:
     
 #Escudo coletado:
     escudo_coletados = []
-    for escudo in grupoEscudo:
-        if jogador.hitbox.colliderect(escudo.rect):
-            escudo_coletados.append(escudo)
-            escudo.kill()
+    for pedacos in grupoEscudo:
+        if jogador.hitbox.colliderect(pedacos.rect):
+            escudo_coletados.append(pedacos)
+            pedacos.kill()
 
     for i in escudo_coletados:
         jogador.escudo += 1
         if jogador.escudo >= 4:
-            jogador.vida += 25
+            jogador.armadura += 25
             jogador.escudo = 0
-        if jogador.vida>100:
-            jogador.vida=100
+        if jogador.armadura>100:
+            jogador.armadura=100
 
 #PowerUP coletado:
     powerup_coletados = []
@@ -261,7 +264,8 @@ while main:
 #Colocar as novas HUDs na tela:
     tela.blit(hp_form, (18, 18))
     tela.blit(coin_form, (200, 18))
-    tela.blit(escudo_form, (18, 68))
+    tela.blit(pedacos_form, (18, 68))
+    tela.blit(escudos_form, (18, 108))
     tela.blit(timer, rect_timer)
 
     #Tiro do jogador 
@@ -327,7 +331,10 @@ while main:
         if jogador.hitbox.colliderect(enemy.rect):
             colisao_i = True
     if (colisao_b or colisao_i) and not jogador.invencibilidade: #as variáveis ficam falsas até detectarem uma colisão, quando recebe um elemento, entra na condicional
-        jogador.vida -= 20
+        if jogador.armadura == 0:
+            jogador.vida -= 20
+        else:
+            jogador.armadura -= 20
         jogador.dano_update()
         t_invencibilidade = perf_counter()
         t_clicks = perf_counter()
