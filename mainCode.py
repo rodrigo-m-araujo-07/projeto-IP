@@ -5,7 +5,7 @@ from enemy import Inimigo, Bullet
 import sys
 import os
 import random
-from itens import itemGeral, ParteEscudo, PowerUP
+from itens import itemGeral, ParteEscudo, PowerUP, Moedas, Cura
 from time import perf_counter
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
@@ -48,10 +48,17 @@ pygame.time.set_timer(create_powerup, 6000)
 
 timerItem = pygame.time.set_timer(createItem, 3000)
 
+create_Moeda = pygame.USEREVENT + 3
+pygame.time.set_timer(create_Moeda, 2000)
+create_Cura = pygame.USEREVENT + 4
+pygame.time.set_timer(create_Cura, 3000)
+
 #cria grupos
 grupoItem = pygame.sprite.Group()
 grupoEscudo = pygame.sprite.Group()
 grupoPowerUP = pygame.sprite.Group()
+grupoCura = pygame.sprite.Group()
+grupoMoeda = pygame.sprite.Group()
 grupoBala = pygame.sprite.Group()
 grupoJogador = pygame.sprite.Group()
 grupoInimigo = pygame.sprite.Group()
@@ -66,6 +73,9 @@ disparo = 1
 
 #Novas variáveis do tiro:
 inicio_de_jogo = perf_counter ()
+
+# qtd. moedas inicial
+jogador.moedas = 0
 
 cooldown_normal = 1
 cooldown_especial = 0.25
@@ -95,6 +105,9 @@ while main:
     #HUD do escudo
     escudo = f"Escudo: {jogador.escudo}/4"
     escudo_form = fonte.render(escudo, False, (100,180,255))
+    
+    coin = f"Moedas : {jogador.moedas}"
+    coin_form = fonte.render(coin, False, (255, 255, 255))
 
     #HUD do tempo 
     tempo_de_jogo = perf_counter () - inicio_de_jogo
@@ -144,7 +157,22 @@ while main:
                     posInicial=(x, y),
                 )
                 grupoPowerUP.add(powerupSpawnado)
-    
+#cria cura
+        if event.type == create_Cura:
+            x = random.randint(200,1100)
+            y = random.randint(200,600)
+            cura = Cura(
+                spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
+                posInicial=(x, y)
+            )
+            grupoCura.add(cura)
+#cria moeda
+        if event.type == create_Moeda:
+            x = random.randint(200,1100)
+            y = random.randint(200,600)
+            moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
+                posInicial=(x, y),)
+            grupoMoeda.add(moeda)
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
@@ -160,6 +188,8 @@ while main:
         if jogador.escudo >= 4:
             jogador.vida += 25
             jogador.escudo = 0
+        if jogador.vida>100:
+            jogador.vida=100
 
 #PowerUP coletado:
     powerup_coletados = []
@@ -179,6 +209,42 @@ while main:
             powerup_ativo = False
             intervalo_tiro = cooldown_normal
 
+#curas coletado:
+    cura_coletados = []
+    for cura in grupoCura:
+        if jogador.hitbox.colliderect(cura.rect):
+            cura_coletados.append(cura)
+            cura.kill()
+
+    for i in cura_coletados:
+        jogador.vida += 10
+        if jogador.vida > 100:
+            jogador.vida = 100
+
+#moedas coletado:
+    moeda_coletados = []
+    for moeda in grupoMoeda:
+        if jogador.hitbox.colliderect(moeda.rect):
+            moeda_coletados.append(moeda)
+            moeda.kill()
+
+    for i in moeda_coletados:
+        jogador.moedas+=1
+
+    """
+    #colisão player item
+    colisoes = pygame.sprite.spritecollide(jogador, grupoItem, True)
+
+    for item in colisoes:
+        # identifica o tipo de item recebido
+        if isinstance(item, Moedas):
+            jogador.moedas += item.valor
+            print('Moeda recebida')
+
+        elif isinstance(item, Cura):
+            jogador.vida += item.valor
+    """
+
 #background scrolling
     appender=0
     while(appender<tiles):
@@ -191,6 +257,7 @@ while main:
         
 #Colocar as novas HUDs na tela:
     tela.blit(hp_form, (18, 18))
+    tela.blit(coin_form, (200, 18))
     tela.blit(escudo_form, (18, 68))
     tela.blit(timer, rect_timer)
 
@@ -229,16 +296,20 @@ while main:
     grupoBala.update(deltaTime)
     grupoPowerUP.update(deltaTime)
     grupoEscudo.update(deltaTime)
+    grupoMoeda.update(deltaTime)
+    grupoCura.update(deltaTime)
     #print(grupoBullets)
     
     #desenha tudo na tela
     #grupoJogador.draw(tela)
-    grupoItem.draw(tela)
+    #grupoItem.draw(tela)
     grupoInimigo.draw(tela)
     grupoBullets.draw(tela)
     grupoBala.draw(tela)
     grupoPowerUP.draw(tela)
     grupoEscudo.draw(tela) 
+    grupoMoeda.draw(tela)
+    grupoCura.draw(tela)
     
 
 #Colisão do disparo do inimigo com a hitbox do player
