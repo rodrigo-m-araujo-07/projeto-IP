@@ -77,8 +77,8 @@ inicio_de_jogo = perf_counter ()
 # qtd. moedas inicial
 jogador.moedas = 0
 
-cooldown_normal = 1
-cooldown_especial = 0.25
+cooldown_normal = 0.35
+cooldown_especial = 0.15
 intervalo_tiro = cooldown_normal
 ultimo_tiro = 0
 powerup_ativo = False
@@ -140,15 +140,16 @@ while main:
             grupoItem.add(itemSpawnado)
 #Criar o escudo:
         if event.type == create_escudo:
-            if len(grupoEscudo) < 6:
-                print("escudo")
-                x = random.randint(200,1100)
-                y = random.randint(200,600)
-                escudoSpawnado = ParteEscudo(
-                    spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
-                    posInicial=(x, y))
-            
-            grupoEscudo.add(escudoSpawnado)
+            if jogador.armadura < 100:
+                if len(grupoEscudo) < 6:
+                    print("escudo")
+                    x = random.randint(200,1100)
+                    y = random.randint(200,600)
+                    escudoSpawnado = ParteEscudo(
+                        spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
+                        posInicial=(x, y))
+                
+                    grupoEscudo.add(escudoSpawnado)
 
 #Criar o powerUP:
         if event.type == create_powerup:
@@ -170,7 +171,7 @@ while main:
                     spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
                     posInicial=(x, y)
             )
-            grupoCura.add(cura)
+                grupoCura.add(cura)
 #cria moeda
         if event.type == create_Moeda:
             if len(grupoMoeda) < 8:
