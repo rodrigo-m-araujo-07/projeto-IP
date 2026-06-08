@@ -49,9 +49,9 @@ pygame.time.set_timer(create_powerup, 6000)
 timerItem = pygame.time.set_timer(createItem, 3000)
 
 create_Moeda = pygame.USEREVENT + 3
-pygame.time.set_timer(create_Moeda, 2000)
+pygame.time.set_timer(create_Moeda, 4000)
 create_Cura = pygame.USEREVENT + 4
-pygame.time.set_timer(create_Cura, 3000)
+pygame.time.set_timer(create_Cura, 6000)
 
 #cria grupos
 grupoItem = pygame.sprite.Group()
@@ -137,12 +137,13 @@ while main:
             grupoItem.add(itemSpawnado)
 #Criar o escudo:
         if event.type == create_escudo:
-            print("escudo")
-            x = random.randint(200,1100)
-            y = random.randint(200,600)
-            escudoSpawnado = ParteEscudo(
-                spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
-                posInicial=(x, y))
+            if len(grupoEscudo) < 6:
+                print("escudo")
+                x = random.randint(200,1100)
+                y = random.randint(200,600)
+                escudoSpawnado = ParteEscudo(
+                    spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
+                    posInicial=(x, y))
             
             grupoEscudo.add(escudoSpawnado)
 
@@ -159,20 +160,22 @@ while main:
                 grupoPowerUP.add(powerupSpawnado)
 #cria cura
         if event.type == create_Cura:
-            x = random.randint(200,1100)
-            y = random.randint(200,600)
-            cura = Cura(
-                spriteImage=os.path.join(folderPath, 'images','Items', 'heart pixel art 32x32.png'),
-                posInicial=(x, y)
+            if len(grupoCura) < 4:
+                x = random.randint(200,1100)
+                y = random.randint(200,600)
+                cura = Cura(
+                    spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
+                    posInicial=(x, y)
             )
             grupoCura.add(cura)
 #cria moeda
         if event.type == create_Moeda:
-            x = random.randint(200,1100)
-            y = random.randint(200,600)
-            moeda = Moedas(spriteImage=os.path.join(folderPath,'images','Items', 'coin 2.png'),
-                posInicial=(x, y),)
-            grupoMoeda.add(moeda)
+            if len(grupoMoeda) < 8:
+                x = random.randint(200,1100)
+                y = random.randint(200,600)
+                moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
+                    posInicial=(x, y),)
+                grupoMoeda.add(moeda)
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
@@ -188,8 +191,8 @@ while main:
         if jogador.escudo >= 4:
             jogador.vida += 25
             jogador.escudo = 0
-        if jogador.vida>200:
-            jogador.vida=200
+        if jogador.vida>100:
+            jogador.vida=100
 
 #PowerUP coletado:
     powerup_coletados = []
