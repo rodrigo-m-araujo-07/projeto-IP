@@ -188,8 +188,8 @@ while main:
         if jogador.escudo >= 4:
             jogador.vida += 25
             jogador.escudo = 0
-        if jogador.vida>100:
-            jogador.vida=100
+        if jogador.vida>200:
+            jogador.vida=200
 
 #PowerUP coletado:
     powerup_coletados = []
