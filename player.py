@@ -107,6 +107,8 @@ class Bala(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = posicao[0]
         self.rect.centery = posicao[1]
+        self.image = pygame.transform.scale(self.image, (64, 64))
+        self.rect = self.image.get_rect(center=posicao)
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
         self.velocidade = 600
         self.dire = pygame.math.Vector2(0, 0)
