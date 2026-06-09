@@ -12,6 +12,8 @@ from loja import abrir_loja
 folderPath = os.path.dirname(os.path.abspath(__file__))
 pygame.init() 
 
+camera = pygame.math.Vector2(0, 0)
+
 clock = pygame.time.Clock()
 
 bgHeight = 800
@@ -275,11 +277,14 @@ while main:
     while(appender<tiles):
         tela.blit(bg, (0, -bg.get_height()*appender+scroll))
         appender+=1
-    scroll+=6
+    scroll+=12
 #reset scrolling
     if abs(scroll)>bg.get_height():
         scroll=0
-        
+
+#mover camera
+    camera-=(0,6)
+
 #Colocar as novas HUDs na tela:
     tela.blit(hp_form, (18, 18))
     tela.blit(coin_form, (200, 18))
@@ -345,14 +350,14 @@ while main:
 
     
     #update de tudo
-    grupoJogador.update(deltaTime)
-    grupoInimigo.update(deltaTime)
-    grupoBullets.update(deltaTime)
-    grupoBala.update(deltaTime)
-    grupoPowerUP.update(deltaTime)
-    grupoEscudo.update(deltaTime)
-    grupoMoeda.update(deltaTime)
-    grupoCura.update(deltaTime)
+    grupoJogador.update(deltaTime, camera)
+    grupoInimigo.update(deltaTime, camera)
+    grupoBullets.update(deltaTime, camera)
+    grupoBala.update(deltaTime, camera)
+    grupoPowerUP.update(deltaTime, camera)
+    grupoEscudo.update(deltaTime, camera)
+    grupoMoeda.update(deltaTime, camera)
+    grupoCura.update(deltaTime, camera)
     #print(grupoBullets)
     
     #desenha tudo na tela
@@ -366,6 +371,7 @@ while main:
     grupoMoeda.draw(tela)
     grupoCura.draw(tela)
     
+    print("rectJogador", jogador.rect)
 
 #Colisão do disparo do inimigo com a hitbox do player
     colisao_b = False

@@ -94,11 +94,11 @@ class Inimigo(pygame.sprite.Sprite):
 
 
 
-    def update(self, dt):
+    def update(self, dt, camera):
         self.dir()
         self.dt = dt
-        self.rect.centerx = self.posicao.x
-        self.rect.centery = self.posicao.y
+        self.rect.centerx = self.posicao.x - camera.x
+        self.rect.centery = self.posicao.y - camera.y
 
         
         
@@ -179,6 +179,16 @@ class Bullet(pygame.sprite.Sprite):
                 self.image = pygame.transform.scale(self.image, (int(deltax*1.02), int(deltay*1.02)))
                 self.rect = self.rect.scale_by(1.02, 1.02)
 
+    def mov(self, camera):
+        #if self.tipo == "follow":    
+            #print(self.dire)
+            self.posicao.x += (self.dire.x - camera.x) * self.dt
+            self.posicao.y += (self.dire.y - camera.y) *self.dt
+            #print(self.fix_dir)
+            self.rect.centerx = self.posicao.x
+            self.rect.centery = self.posicao.y
+            #print(self.rect.center)
+        #elif self.tipo == "rajada":
 
 
     def mudar_disparo(self):
@@ -187,8 +197,8 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.disparo =0
 
-    def update(self, dt):
-        self.mov()
+    def update(self, dt, camera):
+        self.mov(camera)
         self.dt = dt
         if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
             self.kill()

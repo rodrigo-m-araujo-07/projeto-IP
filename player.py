@@ -64,17 +64,23 @@ class Jogador(pygame.sprite.Sprite):
         if self.direction != (0,0):
             self.direction = self.direction.normalize()
     
-    def movimentacao(self):
+    def movimentacao(self, camera):
         print("pos", self.posicao)
         print("rect", self.rect)
+        print("camera", camera)
         nextPosX = self.posicao.x + self.direction.x * self.velocidade * self.deltaTime
         nextPosY = (self.posicao.y + self.direction.y * self.velocidade * self.deltaTime)# - 6 colocar movimentação padrão do player
-        if nextPosX >= self.rect[2]/3 and nextPosX <= tamanhoMapa[0]-self.rect[2]/3:
+        print("nextPosX", nextPosX)
+        print("nextPosY", nextPosY)        
+        if nextPosX >= self.rect[2]/3 and nextPosX <= (tamanhoMapa[0])-self.rect[2]/3:
             self.posicao.x = nextPosX
-        if nextPosY <= tamanhoMapa[1]-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
-            self.posicao.y = nextPosY
-        self.rect.centerx = self.posicao.x
-        self.rect.centery = self.posicao.y
+            self.rect.centerx = self.posicao.x
+        print("tamanho", tamanhoMapa)
+        print("tamanho+", tamanhoMapa[1]+camera.y)
+        if nextPosY <= (tamanhoMapa[1])-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
+            self.posicao.y = nextPosY+2
+            self.rect.centery = self.posicao.y
+        
         #Hitbox 2:
         self.hitbox.center = self.rect.center
     
@@ -112,10 +118,10 @@ class Jogador(pygame.sprite.Sprite):
         self.kills += 1
 
 
-    def update(self,dt):
+    def update(self,dt,camera):
         self.deltaTime = dt
         self.getDirection()
-        self.movimentacao()
+        self.movimentacao(camera)
 #Bala do player:
 class Bala(pygame.sprite.Sprite):
     def __init__(self, image, posicao, dt):
@@ -152,18 +158,18 @@ class Bala(pygame.sprite.Sprite):
           #  self.dire = self.dire.normalize()
        # print(), print(self.dire)
 
-    def mov(self):
+    def mov(self, camera):
         #print(self.dire)
-        self.posicao.x += self.dire.x * self.dt
-        self.posicao.y += self.dire.y *self.dt
+        self.posicao.x += (self.dire.x - camera.x) * self.dt
+        self.posicao.y += (self.dire.y - camera.y) *self.dt
         #print(self.fix_dir)
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
         #print(self.rect.center)
         
         
-    def update(self, dt):
-        self.mov()
+    def update(self, dt, camera):
+        self.mov(camera)
         self.dt = dt
         #self.dt = clock.tick(60)/1000
         #if self.dt>1.0:
