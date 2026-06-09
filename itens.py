@@ -16,6 +16,7 @@ class itemGeral(pygame.sprite.Sprite):
         self.image = self.animacoes["blink"][0].convert_alpha()
         self.rect = self.image.get_rect()
         self.posicao = pygame.math.Vector2(self.rect.center)
+        self.dt=0
         
         #setting spawn pos
         self.posicao.x = posInicial[0]
@@ -35,6 +36,17 @@ class itemGeral(pygame.sprite.Sprite):
                 sprite = pygame.transform.scale(sprite, (256, 256))
                 animacoes["blink"].append(sprite)
         return animacoes
+    
+    def movimentacao(self, camera):
+        self.posicao.x+=camera.x
+        self.posicao.y+=camera.y
+        self.rect.centerx = self.posicao.x*self.dt
+        self.rect.centery = self.posicao.y*self.dt
+        
+    def update(self, dt, camera):
+        self.dt = dt
+        self.movimentacao(camera)
+        
 
 class ParteEscudo(itemGeral):
     def __init__(self, spriteImage, posInicial):

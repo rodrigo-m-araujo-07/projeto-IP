@@ -79,11 +79,11 @@ class Inimigo(pygame.sprite.Sprite):
 
 
 
-    def update(self, dt):
+    def update(self, dt, camera):
         self.dir()
         self.dt = dt
-        self.rect.centerx = self.posicao.x
-        self.rect.centery = self.posicao.y
+        self.rect.centerx = self.posicao.x - camera.x
+        self.rect.centery = self.posicao.y - camera.y
 
         
         
@@ -148,15 +148,11 @@ class Bullet(pygame.sprite.Sprite):
             self.dire = pygame.math.Vector2((cos*self.velocidade), (sin*self.velocidade))
             print("AQUI porra"),print(self.dire)
 
-
-
-
-
-    def mov(self):
+    def mov(self, camera):
         #if self.tipo == "follow":    
             #print(self.dire)
-            self.posicao.x += self.dire.x * self.dt
-            self.posicao.y += self.dire.y *self.dt
+            self.posicao.x += (self.dire.x - camera.x) * self.dt
+            self.posicao.y += (self.dire.y - camera.y) *self.dt
             #print(self.fix_dir)
             self.rect.centerx = self.posicao.x
             self.rect.centery = self.posicao.y
@@ -170,8 +166,8 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.disparo =0
 
-    def update(self, dt):
-        self.mov()
+    def update(self, dt, camera):
+        self.mov(camera)
         self.dt = dt
         #self.dt = clock.tick(60)/1000
         #if self.dt>1.0:
