@@ -122,6 +122,10 @@ while main:
     rect_timer = timer.get_rect()
     rect_timer.center = (680, 50)
 
+    #HUD de kills
+    kills = f"Kills: {jogador.kills}"
+    kills_form = fonte.render(kills, False, (255, 255, 255))
+
     #ve se fechou o jogo
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -272,6 +276,7 @@ while main:
     tela.blit(pedacos_form, (18, 68))
     tela.blit(escudos_form, (18, 108))
     tela.blit(timer, rect_timer)
+    tela.blit(kills_form, (1200, 18))
 
     #Tiro do jogador 
     if tecla[pygame.K_SPACE]:
@@ -388,6 +393,7 @@ while main:
             #print(f"Inimigo: {enemy01.vida}")
         if enemy.vida <= 0:
             enemy.kill()
+            jogador.add_kill()
 
     #flip atualiza a tela
     pygame.display.update()

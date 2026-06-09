@@ -36,6 +36,7 @@ class Jogador(pygame.sprite.Sprite):
         self.tempoPiscar = 0.5
         self.escudo = 0
         self.armadura = 0
+        self.kills = 0
         
     
     def fatiar_spritesheet(self,sheet):
@@ -88,10 +89,11 @@ class Jogador(pygame.sprite.Sprite):
     def image_update(self):
         if self.invencibilidade:
             self.image = self.animacoes["run"][2]
-            print("vermelho")
         else:
             self.image = self.animacoes["run"][10]
-            print("verde")
+
+    def add_kill(self):
+        self.kills += 1
 
 
     def update(self,dt):
@@ -113,6 +115,7 @@ class Bala(pygame.sprite.Sprite):
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
         self.velocidade = 600
         self.dire = pygame.math.Vector2(0, 0)
+        
         
         
     def direcao(self, posA, posB):
@@ -141,7 +144,7 @@ class Bala(pygame.sprite.Sprite):
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
         #print(self.rect.center)
-
+        
         
     def update(self, dt):
         self.mov()
