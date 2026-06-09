@@ -91,18 +91,22 @@ class Jogador(pygame.sprite.Sprite):
                 self.powerUp = False
             else: self.powerUp = True
 
-    def image_update(self, tipo):
+    def image_update(self, tipo): #animação 2-default, animação 10-dano, animação 4-dano+PU, animação 6-PU
         if tipo == "D":    
             if self.invencibilidade:
                 self.image = self.animacoes["run"][2]
             else:
                 self.image = self.animacoes["run"][10]
+                if self.powerUp:
+                    self.image = self.animacoes["run"][4]
         elif tipo == "PU":
             if self.powerUp:
                 self.image = self.animacoes["run"][2]
                 print("VOLTA NORMAL KRL")
             else:
                 self.image = self.animacoes["run"][6]
+            #if self.invencibilidade: seria p mudar tb se pegar o pu enquanto no dano --acho paia
+                #self.image = self.animacoes["run"][4]
 
     def add_kill(self):
         self.kills += 1

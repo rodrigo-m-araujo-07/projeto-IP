@@ -218,7 +218,7 @@ while main:
         intervalo_tiro = cooldown_especial
 
 #Power UP ativado:
-    if powerup_ativo:
+    if jogador.powerUp:
         tempo_passado = perf_counter() - powerup_t_inicio
         if tempo_passado >= 5: #dura 5 segundos
             jogador.player_update("PU")
