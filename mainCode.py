@@ -68,11 +68,7 @@ grupoBullets = pygame.sprite.Group()
 main = True
 enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
 enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
-#enemy03 = Inimigo(2, deltaTime, pos=(1200, 200), velocidade=(0, 100), vida =500, limites_mov=(1000, 1000), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
-
-#variaveis para o disparo da bala
-t_disparo1, t_disparo2, t_disparo3 = perf_counter(), perf_counter(), perf_counter()
-disparo1, disparo2, disparo3 = 1, 1, 1
+enemy03 = Inimigo(2, deltaTime, pos=(1200, 400), velocidade=(0, 200), vida =100, limites_mov=(1000, 1000, 200, 600), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
 
 
 #Novas variáveis do tiro:
@@ -92,7 +88,7 @@ duracao =  5
 #Mudei a criação dos personagens pra fora do loop main pra poder fazer com que o inimigo morre
 #criar personagens
 grupoJogador.add(jogador)
-grupoInimigo.add(enemy01, enemy02)
+grupoInimigo.add(enemy01, enemy02, enemy03)
 #grupoInimigo.add(enemy02)
     
 
@@ -332,7 +328,10 @@ while main:
                 grupoBullets.add(bullet)
                 bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             enemy.timer_disparo()
-        
+            
+
+
+
         elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
             enemy.timer_disparo()
                 
