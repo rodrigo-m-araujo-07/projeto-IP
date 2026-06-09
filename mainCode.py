@@ -66,7 +66,7 @@ grupoBullets = pygame.sprite.Group()
 
 main = True
 enemy01 = Inimigo(0, deltaTime, (670, 200), (500, 500), 200, (500, 1000, 200, 600), "0")
-enemy02 = Inimigo(1, deltaTime, (600, 180), (300, 0), 300, (200, 1000, 180, 180), "R")
+enemy02 = Inimigo(1, deltaTime, (600, 200), (300, 0), 300, (200, 1000, 180, 180), "R")
 
 #variaveis para o disparo da bala
 t_disparo1 = perf_counter()
