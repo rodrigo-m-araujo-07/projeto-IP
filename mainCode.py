@@ -66,14 +66,14 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy01 = Inimigo(0, deltaTime, (670, 200), (500, 500), 200, (500, 1000, 200, 600), "0")
-enemy02 = Inimigo(1, deltaTime, (600, 200), (300, 0), 300, (200, 1000, 180, 180), "R")
+enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
+enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
+#enemy03 = Inimigo(2, deltaTime, pos=(1200, 200), velocidade=(0, 100), vida =500, limites_mov=(1000, 1000), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
 
 #variaveis para o disparo da bala
-t_disparo1 = perf_counter()
-t_disparo2 = perf_counter()
-disparo1 = 1
-disparo2 = 1
+t_disparo1, t_disparo2, t_disparo3 = perf_counter(), perf_counter(), perf_counter()
+disparo1, disparo2, disparo3 = 1, 1, 1
+
 
 #Novas variáveis do tiro:
 inicio_de_jogo = perf_counter ()
@@ -92,8 +92,8 @@ duracao =  5
 #Mudei a criação dos personagens pra fora do loop main pra poder fazer com que o inimigo morre
 #criar personagens
 grupoJogador.add(jogador)
-grupoInimigo.add(enemy01)
-grupoInimigo.add(enemy02)
+grupoInimigo.add(enemy01, enemy02)
+#grupoInimigo.add(enemy02)
     
 
 while main:
@@ -300,42 +300,45 @@ while main:
 
             ultimo_tiro = perf_counter()
 
-    #Só funcionar se o inimigo ainda estiver vivo
-    if enemy01.alive():
-        if disparo1:
-            pow = "null"
-            bullet = Bullet(
-                os.path.join(folderPath, "images", "enemy", "bullet.png"),
-                (enemy01.rect.centerx,enemy01.rect.centery),
-                dt=deltaTime,
-                tipo = "follow",
-                velocidade=600
-            )
-            grupoBullets.add(bullet)
-            bullet.direcao((jogador.rect.center), (enemy01.rect.center), pow)
-            disparo1 = 0
-            print("POW")
-        elif perf_counter() - t_disparo1 >= 3:
-            disparo1 = 1
-            t_disparo1 = perf_counter()
-    
-    if enemy02.alive():
-        if disparo2:
-            for pow in range(5):    
+    #checa os inimigos ativos para disparar
+    for enemy in grupoInimigo:
+        if enemy.disparo:
+            if enemy.tipo_bala == "follow": 
                 bullet = Bullet(
                     os.path.join(folderPath, "images", "enemy", "bullet.png"),
-                    (enemy02.rect.centerx,enemy02.rect.centery),
+                    (enemy.rect.centerx,enemy.rect.centery),
                     dt=deltaTime,
-                    tipo = "rajada",
-                    velocidade=500
+                    tipo = "follow"
                 )
                 grupoBullets.add(bullet)
-                bullet.direcao((jogador.rect.center), (enemy02.rect.center), pow)
-            disparo2 = 0
-            print("POW")
-        elif perf_counter() - t_disparo2 >= 5:
-            disparo2 = 1
-            t_disparo2 = perf_counter()
+                bullet.direcao((jogador.rect.center), (enemy01.rect.center), pow)
+            elif enemy.tipo_bala == "rajada":
+                for pow in range(5):    
+                    bullet = Bullet(
+                        os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                        (enemy.rect.centerx,enemy.rect.centery),
+                        dt=deltaTime,
+                        tipo = "rajada",
+                    )
+                    grupoBullets.add(bullet)
+                    bullet.direcao((jogador.rect.center), (enemy02.rect.center), pow)
+            elif enemy.tipo_bala == "bigger":
+                bullet = Bullet(
+                    os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                    (enemy.rect.centerx,enemy.rect.centery),
+                    dt=deltaTime,
+                    tipo = "bigger"
+                )
+                grupoBullets.add(bullet)
+                bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
+            enemy.timer_disparo()
+        
+        elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
+            enemy.timer_disparo()
+                
+            
+
+        
 
     
     #update de tudo

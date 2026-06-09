@@ -1,13 +1,14 @@
 import pygame
 import os
 import math #para deixar o código mais claro durante as operações matemáticas
+from time import perf_counter
 clock = pygame.time.Clock()
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
-imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png")
+imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png", "quadrado_roxo.png")
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial):
+    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala, dDisparo):
         
         super().__init__()
         self.dt = dt
@@ -22,7 +23,18 @@ class Inimigo(pygame.sprite.Sprite):
         self.vida = vida
         self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
         self.sentido_inicial = sentido_inicial
+        self.tipo_bala = tipo_bala
+        self.disparo = 1
+        self.dDisparo = dDisparo #intervalo entre os disparos
+        self.t_disparo = 0
 
+    def timer_disparo(self):
+        self.t_disparo = perf_counter()
+        if self.disparo == 0:
+            self.disparo = 1
+        else:
+            self.disparo = 0
+    
 
     def _mudar_sentido(self):
         if self.sentido_inicial == "R":
@@ -94,7 +106,9 @@ class Inimigo(pygame.sprite.Sprite):
         
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, posicao, dt, tipo, velocidade):
+    
+    def __init__(self, image, posicao, dt, tipo):
+        velocidades = {"follow": 600, "rajada": 500, "bigger": 400}
         #print("teste 1")
         super().__init__()
         self.dt = dt
@@ -105,7 +119,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posicao)
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-        self.velocidade = velocidade
+        self.velocidade = velocidades[tipo]
         self.disparo = 1
         self.tipo = tipo
         
@@ -147,6 +161,8 @@ class Bullet(pygame.sprite.Sprite):
                 sin = -sin
             self.dire = pygame.math.Vector2((cos*self.velocidade), (sin*self.velocidade))
             print("AQUI porra"),print(self.dire)
+        
+        #if self.tipo == "bigger":
 
 
 
@@ -155,6 +171,7 @@ class Bullet(pygame.sprite.Sprite):
     def mov(self):
         #if self.tipo == "follow":    
             #print(self.dire)
+            print(self.dire)
             self.posicao.x += self.dire.x * self.dt
             self.posicao.y += self.dire.y *self.dt
             #print(self.fix_dir)
