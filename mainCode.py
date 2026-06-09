@@ -69,8 +69,10 @@ enemy01 = Inimigo(0, deltaTime, (670, 200), (500, 500), 200, (500, 1000, 200, 60
 enemy02 = Inimigo(1, deltaTime, (600, 180), (300, 0), 300, (200, 1000, 180, 180), "R")
 
 #variaveis para o disparo da bala
-t_disparo = perf_counter()
-disparo = 1
+t_disparo1 = perf_counter()
+t_disparo2 = perf_counter()
+disparo1 = 1
+disparo2 = 1
 
 #Novas variáveis do tiro:
 inicio_de_jogo = perf_counter ()
@@ -277,19 +279,39 @@ while main:
 
     #Só funcionar se o inimigo ainda estiver vivo
     if enemy01.alive():
-        if disparo:
+        if disparo1:
+            pow = "null"
             bullet = Bullet(
                 os.path.join(folderPath, "images", "enemy", "bullet.png"),
                 (enemy01.rect.centerx,enemy01.rect.centery),
-                dt=deltaTime
+                dt=deltaTime,
+                tipo = "follow"
             )
             grupoBullets.add(bullet)
-            bullet.direcao((jogador.rect.center), (enemy01.rect.center))
-            disparo = 0
+            bullet.direcao((jogador.rect.center), (enemy01.rect.center), pow)
+            disparo1 = 0
             print("POW")
-        elif perf_counter() - t_disparo >= 3:
-            disparo = 1
-            t_disparo = perf_counter()
+        elif perf_counter() - t_disparo1 >= 3:
+            disparo1 = 1
+            t_disparo1 = perf_counter()
+    
+    if enemy02.alive():
+        if disparo2:
+            for pow in range(5):    
+                bullet = Bullet(
+                    os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                    (enemy02.rect.centerx,enemy02.rect.centery),
+                    dt=deltaTime,
+                    tipo = "rajada"
+                )
+                grupoBullets.add(bullet)
+                bullet.direcao((jogador.rect.center), (enemy02.rect.center), pow)
+            disparo2 = 0
+            print("POW")
+        elif perf_counter() - t_disparo2 >= 5:
+            disparo2 = 1
+            t_disparo2 = perf_counter()
+
     
     #update de tudo
     grupoJogador.update(deltaTime)

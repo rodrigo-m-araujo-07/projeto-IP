@@ -94,7 +94,7 @@ class Inimigo(pygame.sprite.Sprite):
         
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, posicao, dt):
+    def __init__(self, image, posicao, dt, tipo):
         #print("teste 1")
         super().__init__()
         self.dt = dt
@@ -104,10 +104,12 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = posicao[1]
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
         self.velocidade = 600
+        self.disparo = 1
+        self.tipo = tipo
         
 
 
-    def direcao(self, posA, posB):
+    def direcao(self, posA, posB, pow):
         #print(posA)
        # print()
        # print(posB)
@@ -119,22 +121,35 @@ class Bullet(pygame.sprite.Sprite):
         if (dx <=0 and dy <= 0) or (dy >= 0 and dx<=0): #caso precise inverter alguma coordenada
             cos = -cos
             sin = -sin
-        
-        self.dire = pygame.math.Vector2(math.ceil(cos*self.velocidade), math.ceil(sin*self.velocidade))
-        #if (dx, dy) != (0, 0):
-          #  self.dire = self.dire.normalize()
-       # print(), print(self.dire)
+        if self.tipo == "follow":
+            self.dire = pygame.math.Vector2(math.ceil(cos*self.velocidade), math.ceil(sin*self.velocidade))
+    
+        if self.tipo == "rajada":
+            indicies = {"b0" : (-(dx+50), dy), "b1" : (-dx, dy), "b2" : (posB[0], 0), "b3":(dx, dy), "b4" :(dx+50, dy)}
+            self.dire = pygame.math.Vector2(math.ceil(cos(indicies[f"b{pow}"][0])), math.ceil(sin(indicies[f"b{pow}"][1])))
+
+
+
+
 
     def mov(self):
-        #print(self.dire)
-        self.posicao.x += self.dire.x * self.dt
-        self.posicao.y += self.dire.y *self.dt
-        #print(self.fix_dir)
-        self.rect.centerx = self.posicao.x
-        self.rect.centery = self.posicao.y
-        #print(self.rect.center)
+        #if self.tipo == "follow":    
+            #print(self.dire)
+            self.posicao.x += self.dire.x * self.dt
+            self.posicao.y += self.dire.y *self.dt
+            #print(self.fix_dir)
+            self.rect.centerx = self.posicao.x
+            self.rect.centery = self.posicao.y
+            #print(self.rect.center)
+        #elif self.tipo == "rajada":
 
-        
+
+    def mudar_disparo(self):
+        if self.disparo == 0:
+            self.disparo =1
+        else:
+            self.disparo =0
+
     def update(self, dt):
         self.mov()
         self.dt = dt
