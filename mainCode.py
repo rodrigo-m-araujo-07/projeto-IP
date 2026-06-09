@@ -16,8 +16,8 @@ camera = pygame.math.Vector2(0, 0)
 
 clock = pygame.time.Clock()
 
-bgHeight = 800
-bgWidth = 1360
+bgHeight = pygame.display.Info().current_h
+bgWidth = pygame.display.Info().current_w
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
 telaSizePlaceholder = (bgWidth,bgHeight)
 tela = pygame.display.set_mode(telaSizePlaceholder)
@@ -36,8 +36,9 @@ deltaTime = clock.tick(60)/1000
 
 jogador = Jogador(
         spriteImage=os.path.join(folderPath,'images', 'playerSprites', 'slime_green.png'),
-        posInicial=(1360 / 2, 600),
-        dt=deltaTime
+        posInicial=(bgWidth / 2, bgHeight-300),
+        dt=deltaTime,
+        tamanhoMapa=(bgWidth,bgHeight)
         #grupos=self.all_sprites,
         #game=self
     )
@@ -99,6 +100,7 @@ grupoInimigo.add(enemy02)
     
 
 while main:
+    print(pygame.display.get_desktop_sizes())
     deltaTime = clock.tick(60)/1000
     if deltaTime>1.0:
         deltaTime=1.0
@@ -142,8 +144,8 @@ while main:
                 main=False
         if event.type == createItem:
             print("criar")
-            x = random.randint(200,1100)
-            y = random.randint(200,600)
+            x = random.randint(200,bgWidth-200)
+            y = -200
             itemSpawnado = itemGeral(
                 spriteImage=os.path.join(folderPath,'images', 'itemBase.png'),
                 posInicial=(x, y),
@@ -154,8 +156,8 @@ while main:
             if jogador.armadura < 100:
                 if len(grupoEscudo) < 6:
                     print("escudo")
-                    x = random.randint(200,1100)
-                    y = random.randint(200,600)
+                    x = random.randint(200,bgWidth-200)
+                    y = -200
                     escudoSpawnado = ParteEscudo(
                         spriteImage=os.path.join(folderPath,'images', 'Items', 'Escudo.png'),
                         posInicial=(x, y))
@@ -166,8 +168,8 @@ while main:
         if event.type == create_powerup:
             if len(grupoPowerUP) == 0:
                 print("PowerUP")
-                x = random.randint(200,1100)
-                y = random.randint(200,600)
+                x = random.randint(200,bgWidth-200)
+                y = -200
                 powerupSpawnado = PowerUP(
                     spriteImage=os.path.join(folderPath,'images', 'Items', 'PoweUP.png'),
                     posInicial=(x, y),
@@ -176,8 +178,8 @@ while main:
 #cria cura
         if event.type == create_Cura:
             if len(grupoCura) < 4:
-                x = random.randint(200,1100)
-                y = random.randint(200,600)
+                x = random.randint(200,bgWidth-200)
+                y = -200
                 cura = Cura(
                     spriteImage=os.path.join(folderPath, 'images','items', 'heart pixel art 32x32.png'),
                     posInicial=(x, y)
@@ -186,8 +188,8 @@ while main:
 #cria moeda
         if event.type == create_Moeda:
             if len(grupoMoeda) < 8:
-                x = random.randint(200,1100)
-                y = random.randint(200,600)
+                x = random.randint(200,bgWidth-200)
+                y = -200
                 moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
                     posInicial=(x, y),)
                 grupoMoeda.add(moeda)
@@ -289,9 +291,9 @@ while main:
     tela.blit(hp_form, (18, 18))
     tela.blit(coin_form, (200, 18))
     tela.blit(pedacos_form, (18, 68))
-    tela.blit(escudos_form, (18, 108))
-    tela.blit(timer, rect_timer)
-    tela.blit(kills_form, (1200, 18))
+    tela.blit(escudos_form, (20, 108))
+    tela.blit(timer, (((bgWidth-timer.get_width())/2), 10))
+    tela.blit(kills_form, (bgWidth-kills_form.get_width()-20, 10))
 
     #Tiro do jogador 
     if tecla[pygame.K_SPACE]:
@@ -342,31 +344,7 @@ while main:
             disparo2 = 1
             t_disparo2 = perf_counter()
     
-    #update de tudo
-    grupoJogador.update(deltaTime, camera)
-    grupoInimigo.update(deltaTime, camera)
-    grupoBullets.update(deltaTime, camera)
-    grupoBala.update(deltaTime, camera)
-    grupoPowerUP.update(deltaTime, camera)
-    grupoEscudo.update(deltaTime, camera)
-    grupoMoeda.update(deltaTime, camera)
-    grupoCura.update(deltaTime, camera)
-    #print(grupoBullets)
-    
-    #desenha tudo na tela
-    #grupoJogador.draw(tela)
-    #grupoItem.draw(tela)
-    grupoInimigo.draw(tela)
-    grupoBullets.draw(tela)
-    grupoBala.draw(tela)
-    grupoPowerUP.draw(tela)
-    grupoEscudo.draw(tela) 
-    grupoMoeda.draw(tela)
-    grupoCura.draw(tela)
-    
-    print("rectJogador", jogador.rect)
-
-#Colisão do disparo do inimigo com a hitbox do player
+    #Colisão do disparo do inimigo com a hitbox do player
     colisao_b = False
     for bala in grupoBullets:
         if jogador.hitbox.colliderect(bala.rect):
@@ -409,6 +387,30 @@ while main:
         if enemy.vida <= 0:
             enemy.kill()
             jogador.add_kill()
+
+    #update de tudo
+    grupoJogador.update(deltaTime, camera)
+    grupoInimigo.update(deltaTime, camera)
+    grupoBullets.update(deltaTime, camera)
+    grupoBala.update(deltaTime, camera, jogador.posicao)
+    grupoPowerUP.update(deltaTime, camera)
+    grupoEscudo.update(deltaTime, camera)
+    grupoMoeda.update(deltaTime, camera)
+    grupoCura.update(deltaTime, camera)
+    #print(grupoBullets)
+    
+    #desenha tudo na tela
+    #grupoJogador.draw(tela)
+    #grupoItem.draw(tela)
+    grupoInimigo.draw(tela)
+    grupoBullets.draw(tela)
+    grupoBala.draw(tela)
+    grupoPowerUP.draw(tela)
+    grupoEscudo.draw(tela) 
+    grupoMoeda.draw(tela)
+    grupoCura.draw(tela)
+    
+    print("rectJogador", jogador.rect)
 
     #flip atualiza a tela
     pygame.display.update()
