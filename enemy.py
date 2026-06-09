@@ -1,13 +1,14 @@
 import pygame
 import os
 import math #para deixar o código mais claro durante as operações matemáticas
+from time import perf_counter
 clock = pygame.time.Clock()
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
-imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png")
+imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png", "quadrado_roxo.png")
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial):
+    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala, dDisparo):
         
         super().__init__()
         self.dt = dt
@@ -22,7 +23,18 @@ class Inimigo(pygame.sprite.Sprite):
         self.vida = vida
         self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
         self.sentido_inicial = sentido_inicial
+        self.tipo_bala = tipo_bala
+        self.disparo = 1
+        self.dDisparo = dDisparo #intervalo entre os disparos
+        self.t_disparo = 0
 
+    def timer_disparo(self):
+        self.t_disparo = perf_counter()
+        if self.disparo == 0:
+            self.disparo = 1
+        else:
+            self.disparo = 0
+    
 
     def _mudar_sentido(self):
         if self.sentido_inicial == "R":
@@ -67,15 +79,18 @@ class Inimigo(pygame.sprite.Sprite):
                 self.posicao.x -= self.velocidadex * self.dt
 
         elif self.velocidadey != 0:
-            if self.posicao.y >= self.limites_mov[1]:
+            if self.posicao.y >= self.limites_mov[3]:
                 self._mudar_sentido()
-            elif self.posicao.y <= self.limites_mov[0]:
+            elif self.posicao.y <= self.limites_mov[2]:
                 self._mudar_sentido()
-            
+
             if self.sentido_inicial == "R":
-                self.posicao.y += self.velocidadex * self.dt
+                self.posicao.y += self.velocidadey * self.dt
             elif self.sentido_inicial == "L":
-                self.posicao.y -= self.velocidadex * self.dt
+                self.posicao.y -= self.velocidadey * self.dt
+                print("DESCE CARALHO PORRA")
+
+            print(f"POSICAO DESSE CORNO {self.posicao}")
 
 
 
@@ -94,7 +109,9 @@ class Inimigo(pygame.sprite.Sprite):
         
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, image, posicao, dt, tipo, velocidade):
+    
+    def __init__(self, image, posicao, dt, tipo):
+        velocidades = {"follow": 600, "rajada": 500, "bigger": 400}
         #print("teste 1")
         super().__init__()
         self.dt = dt
@@ -105,20 +122,17 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posicao)
         self.posicao = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
-        self.velocidade = velocidade
+        self.velocidade = velocidades[tipo]
         self.disparo = 1
         self.tipo = tipo
         
 
 
     def direcao(self, posA, posB, pow):
-        #print(posA)
-       # print()
-       # print(posB)
         dx = (posA[0] - posB[0])
         dy = (posA[1] - posB[1])
         
-        if self.tipo == "follow":
+        if self.tipo == "follow" or self.tipo == "bigger":
             if dx !=0: #para evitar divisao por zero    
                 ang = (math.atan(dy/dx))
             else:
@@ -148,6 +162,23 @@ class Bullet(pygame.sprite.Sprite):
             self.dire = pygame.math.Vector2((cos*self.velocidade), (sin*self.velocidade))
             print("AQUI porra"),print(self.dire)
 
+
+
+    def mov(self):
+        self.posicao.x += self.dire.x * self.dt
+        self.posicao.y += self.dire.y *self.dt
+        #atualiza a posição atual
+        self.rect.centerx = self.posicao.x
+        self.rect.centery = self.posicao.y
+
+        #caso especial do bigger
+        if self.tipo == "bigger":
+            deltax = int(math.fabs(self.rect.bottomleft[0] - self.rect.bottomright[0]))
+            deltay = int(math.fabs(self.rect.bottomleft[1] - self.rect.topleft[1]))
+            if deltax < 300 and deltay < 300:    
+                self.image = pygame.transform.scale(self.image, (int(deltax*1.02), int(deltay*1.02)))
+                self.rect = self.rect.scale_by(1.02, 1.02)
+
     def mov(self, camera):
         #if self.tipo == "follow":    
             #print(self.dire)
@@ -169,9 +200,6 @@ class Bullet(pygame.sprite.Sprite):
     def update(self, dt, camera):
         self.mov(camera)
         self.dt = dt
-        #self.dt = clock.tick(60)/1000
-        #if self.dt>1.0:
-        #    self.dt=1.0
         if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
             self.kill()
             print("Dead")
