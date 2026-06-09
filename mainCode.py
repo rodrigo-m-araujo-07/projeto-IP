@@ -7,6 +7,7 @@ import os
 import random
 from itens import itemGeral, ParteEscudo, PowerUP, Moedas, Cura
 from time import perf_counter
+from loja import abrir_loja
 
 folderPath = os.path.dirname(os.path.abspath(__file__))
 pygame.init() 
@@ -184,6 +185,14 @@ while main:
                 moeda = Moedas(spriteImage=os.path.join(folderPath,'images','items', 'coin 2.png'),
                     posInicial=(x, y),)
                 grupoMoeda.add(moeda)
+
+        # Abrir loja usando a tecla "L"
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_l:
+                powerup_ativo = abrir_loja(tela, clock, jogador, powerup_ativo)
+                if powerup_ativo:
+                    intervalo_tiro = cooldown_especial
+                    powerup_t_inicio = perf_counter()
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
