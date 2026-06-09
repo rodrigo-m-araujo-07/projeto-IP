@@ -222,16 +222,17 @@ while main:
             powerup_coletados.append(powerup)
             powerup.kill()
     if powerup_coletados:
-        powerup_ativo = True
+        jogador.player_update("PU")
         powerup_t_inicio = perf_counter()
         intervalo_tiro = cooldown_especial
 
 #Power UP ativado:
-    if powerup_ativo:
+    if jogador.powerUp:
         tempo_passado = perf_counter() - powerup_t_inicio
         if tempo_passado >= 5: #dura 5 segundos
-            powerup_ativo = False
+            jogador.player_update("PU")
             intervalo_tiro = cooldown_normal
+            print("MUDOU ESSA CARALHA")
 
 #curas coletado:
     cura_coletados = []
@@ -376,7 +377,7 @@ while main:
             jogador.vida -= 20
         else:
             jogador.armadura -= 20
-        jogador.dano_update()
+        jogador.player_update("D")
         t_invencibilidade = perf_counter()
         t_clicks = perf_counter()
 
@@ -390,7 +391,7 @@ while main:
             t_clicks = perf_counter()
 
     if jogador.invencibilidade and (perf_counter() - t_invencibilidade) >= 3:
-        jogador.dano_update()
+        jogador.player_update("D")
 
     #Colisão tiro dos players com o inimigo e sua morte:
     #print(f"Inimigo: {enemy01.vida}")
@@ -408,6 +409,7 @@ while main:
     pygame.display.update()
     pygame.display.flip()
     clock.tick(fps)
+    print(f"INTERVALO DO TIRO ATUAL {intervalo_tiro}")
 
 
     
