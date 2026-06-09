@@ -1,0 +1,5 @@
+se for windows instala logo pela porcaria da microsoft store mesmo
+ou aqui no site https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe
+python --version #Vê se é 3.12
+pip install pygame #Instalar o pygame
+python -m pygame.examples.aliens #Testar
