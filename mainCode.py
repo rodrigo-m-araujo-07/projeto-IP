@@ -363,8 +363,8 @@ while main:
     #update de tudo
     grupoJogador.update(deltaTime, camera)
     grupoInimigo.update(deltaTime, camera)
-    grupoBullets.update(deltaTime, camera)
-    grupoBala.update(deltaTime, camera)
+    grupoBullets.update(deltaTime, camera, jogador.posicao)
+    grupoBala.update(deltaTime, camera, jogador.posicao)
     grupoPowerUP.update(deltaTime, camera)
     grupoEscudo.update(deltaTime, camera)
     grupoMoeda.update(deltaTime, camera)

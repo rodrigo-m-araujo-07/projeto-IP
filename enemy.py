@@ -190,10 +190,10 @@ class Bullet(pygame.sprite.Sprite):
         else:
             self.disparo =0
 
-    def update(self, dt, camera):
+    def update(self, dt, camera, playerPos):
         self.mov(camera)
         self.dt = dt
-        if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
+        if abs(playerPos.x-self.posicao.x) >= 3000 or abs(playerPos.y-self.posicao.y) >= 3000:
             self.kill()
             #print("Dead")
         
