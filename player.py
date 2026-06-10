@@ -37,7 +37,9 @@ class Jogador(pygame.sprite.Sprite):
         self.escudo = 0
         self.armadura = 0
         self.kills = 0
-        self.powerUp = False
+        self.quick_shot = False
+        self.bullet_time = False
+        self.charge = 0
         
     
     def fatiar_spritesheet(self,sheet):
@@ -93,9 +95,9 @@ class Jogador(pygame.sprite.Sprite):
                 self.invencibilidade = True
         ##print(self.invencibilidade)
         elif tipo == "PU":
-            if self.powerUp:
-                self.powerUp = False
-            else: self.powerUp = True
+            if self.quick_shot:
+                self.quick_shot = False
+            else: self.quick_shot = True
 
     def image_update(self, tipo): #animação 2-default, animação 10-dano, animação 4-dano+PU, animação 6-PU
         if tipo == "D":    
@@ -103,10 +105,10 @@ class Jogador(pygame.sprite.Sprite):
                 self.image = self.animacoes["run"][2]
             else:
                 self.image = self.animacoes["run"][10]
-                if self.powerUp:
+                if self.quick_shot:
                     self.image = self.animacoes["run"][4]
         elif tipo == "PU":
-            if self.powerUp:
+            if self.quick_shot:
                 self.image = self.animacoes["run"][2]
                 #print("VOLTA NORMAL KRL")
             else:
@@ -129,7 +131,7 @@ class Bala(pygame.sprite.Sprite):
         ##print("teste 1")
         super().__init__()
         self.dt = dt
-        self.image = pygame.image.load(os.path.join(self.folderPath, "images", "enemy", "bullet.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join(image)).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = posicao[0]
         self.rect.centery = posicao[1]

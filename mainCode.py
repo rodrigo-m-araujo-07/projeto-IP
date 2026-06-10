@@ -86,7 +86,6 @@ cooldown_normal = 0.35
 cooldown_especial = 0.15
 intervalo_tiro = cooldown_normal
 ultimo_tiro = 0
-powerup_ativo = False
 powerup_t_inicio = 0
 duracao =  5
 
@@ -203,7 +202,7 @@ while main:
                     posInicial=(x, y),)
                 grupoMoeda.add(moeda)
 
-        # Abrir loja usando a tecla "L"
+# Abrir loja usando a tecla "L"
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_l:
                 powerup_ativo = abrir_loja(tela, clock, jogador, powerup_ativo)
@@ -245,11 +244,12 @@ while main:
         intervalo_tiro = cooldown_especial
 
 #Power UP ativado:
-    if jogador.powerUp:
+    if jogador.quick_shot:
         tempo_passado = perf_counter() - powerup_t_inicio
         if tempo_passado >= 5: #dura 5 segundos
             jogador.player_update("PU")
             intervalo_tiro = cooldown_normal
+            jogador.quick_shot = False
             #print("MUDOU ESSA CARALHA")
 
 #curas coletado:
@@ -312,8 +312,11 @@ while main:
     #Tiro do jogador 
     if tecla[pygame.K_SPACE]:
         if perf_counter() - ultimo_tiro >= intervalo_tiro:
-            projetil = Bala(
-                os.path.join(folderPath,"images","enemy","bullet.png"),jogador.rect.center,dt=deltaTime)
+            if not jogador.quick_shot:
+                projetil = Bala(os.path.join(folderPath,"images","enemy","bullet.png"),jogador.rect.center,dt=deltaTime)
+            #quick_shot
+            if jogador.quick_shot:
+                projetil = Bala(os.path.join(folderPath, "images", "Items", "quick_shot.png"),jogador.rect.center,dt=deltaTime)
 
             projetil.dire = pygame.math.Vector2(0, -projetil.velocidade)
 
@@ -321,7 +324,7 @@ while main:
 
             ultimo_tiro = perf_counter()
 
-    #checa os inimigos ativos para disparar
+#checa os inimigos ativos para disparar
     for enemy in grupoInimigo:
         #print(enemy)
         print("pos", enemy.posicao)
