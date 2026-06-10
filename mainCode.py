@@ -114,7 +114,7 @@ while main:
     if len(grupoInimigo) == 0:
         dir = ("R", "L")
         typ = ("follow", "rajada", "bigger")
-        coordenadas = (random.randint(600, 1000), random.randint(200, 400))
+        coordenadas = (random.randint(600, 1000), -200)
         velocid = (random.randint(500, 700), random.randint(200, 250))
         hp = random.randint(200, 500)
         lim = (random.randint(300, 500), random.randint(800, 1200))
