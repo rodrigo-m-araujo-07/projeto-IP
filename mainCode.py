@@ -73,9 +73,9 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, 200), velocidade=(700, 250), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="L", tipo_bala = "follow")
-enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, 300), velocidade=(300, 250), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada")
-enemy03 = Inimigo(i=2, dt=deltaTime, pos=(1000, 400), velocidade=(800, 200), vida =100, limites_mov=(200, 1800, 200, 600), sentido_inicial="L", tipo_bala="bigger")
+enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), velocidade=(700, 250), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="L", tipo_bala = "follow")
+enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200), velocidade=(300, 250), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada")
+enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), velocidade=(800, 200), vida =100, limites_mov=(200, 1100, 200, 600), sentido_inicial="L", tipo_bala="bigger")
 
 
 #Novas variáveis do tiro:
