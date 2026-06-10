@@ -160,7 +160,7 @@ class Bullet(pygame.sprite.Sprite):
             if sin<0:  #correcao para o seno, para ele sempre atirar p baixo 
                 sin = -sin
             self.dire = pygame.math.Vector2((cos*self.velocidade), (sin*self.velocidade))
-            print("AQUI porra"),print(self.dire)
+            #print("AQUI porra"),print(self.dire)
 
 
 
@@ -172,8 +172,10 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = self.posicao.y
 
         #caso especial do bigger
+        print(self.tipo), print("OLHA AQ EM CIMA AGR")
         if self.tipo == "bigger":
-            deltax = int(math.fabs(self.rect.bottomleft[0] - self.rect.bottomright[0]))
+            print("aumenta")
+            deltax = int(self.rect.bottomright[0] - self.rect.bottomleft[0])
             deltay = int(math.fabs(self.rect.bottomleft[1] - self.rect.topleft[1]))
             if deltax < 300 and deltay < 300:    
                 self.image = pygame.transform.scale(self.image, (int(deltax*1.02), int(deltay*1.02)))

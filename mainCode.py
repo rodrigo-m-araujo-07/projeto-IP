@@ -104,7 +104,8 @@ while main:
         enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
         enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
         enemy03 = Inimigo(2, deltaTime, pos=(1200, 400), velocidade=(0, 200), vida =100, limites_mov=(1000, 1000, 200, 600), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
-    
+        grupoInimigo.add(enemy01, enemy02, enemy03)
+        print("ADICIONA"), print(grupoInimigo)
     #vida    
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
@@ -316,7 +317,7 @@ while main:
                     tipo = "follow"
                 )
                 grupoBullets.add(bullet)
-                bullet.direcao((jogador.rect.center), (enemy01.rect.center), pow)
+                bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             elif enemy.tipo_bala == "rajada":
                 for pow in range(5):    
                     bullet = Bullet(
@@ -326,7 +327,7 @@ while main:
                         tipo = "rajada",
                     )
                     grupoBullets.add(bullet)
-                    bullet.direcao((jogador.rect.center), (enemy02.rect.center), pow)
+                    bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             elif enemy.tipo_bala == "bigger":
                 bullet = Bullet(
                     os.path.join(folderPath, "images", "enemy", "bullet.png"),
@@ -338,12 +339,13 @@ while main:
                 bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             enemy.timer_disparo()
             
-
-
-
         elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
             enemy.timer_disparo()
+
+        if enemy.rect.centery >= 1000:
+            enemy.kill()
                 
+    print(grupoInimigo), print("OLHA AQ EM CIMA KRL"), print(len(grupoInimigo))
             
 
         
