@@ -58,14 +58,14 @@ class Inimigo(pygame.sprite.Sprite):
 
         #print(self.posicao)"""
         
-        ##print(self.posicao)
+        ##print(self.posicao) #trocar isso aqui por um timer fixo (subir por x segundos, direita por y segundos, etc)
         if self.velocidadex != 0 and self.velocidadey!=0:
             if self.posicao.y <= self.limites_mov[2] and self.posicao.x <= self.limites_mov[1]:
                 self.posicao.x += self.velocidadex * self.dt
             elif self.posicao.y >= self.limites_mov[3] and self.posicao.x >= self.limites_mov[0]:
                 self.posicao.x -= self.velocidadex * self.dt
             elif self.posicao.x <= self.limites_mov[0] and self.posicao.y >= self.limites_mov[2]:
-                self.posicao.y -= self.velocidadey * self.dt
+                self.posicao.y -= (self.velocidadey - 600) * self.dt
             elif self.posicao.x >= self.limites_mov[1] and self.posicao.y <= self.limites_mov[3]:
                 self.posicao.y += self.velocidadey * self.dt
 
@@ -99,8 +99,10 @@ class Inimigo(pygame.sprite.Sprite):
     def update(self, dt, camera):
         self.dir()
         self.dt = dt
+        print("camera", camera.y)
+        self.posicao.y -= camera.y
         self.rect.centerx = self.posicao.x - camera.x
-        self.rect.centery = self.posicao.y - camera.y
+        self.rect.centery = self.posicao.y
         
         """self.direcao.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         self.direcao.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
@@ -167,8 +169,8 @@ class Bullet(pygame.sprite.Sprite):
     def mov(self, camera):
         #if self.tipo == "follow":    
             #print(self.dire)
-            self.posicao.x += (self.dire.x - camera.x) * self.dt
-            self.posicao.y += (self.dire.y - camera.y) *self.dt
+            self.posicao.x += (self.dire.x) * self.dt
+            self.posicao.y += (self.dire.y) *self.dt
             #atualiza a posicao atual
             self.rect.centerx = self.posicao.x
             self.rect.centery = self.posicao.y

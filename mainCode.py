@@ -12,7 +12,7 @@ from loja import abrir_loja
 folderPath = os.path.dirname(os.path.abspath(__file__))
 pygame.init() 
 
-camera = pygame.math.Vector2(0, 0)
+camera = pygame.math.Vector2(0, -6)
 
 clock = pygame.time.Clock()
 
@@ -71,7 +71,7 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
+enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(700, 700), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
 enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
 enemy03 = Inimigo(2, deltaTime, pos=(1200, 400), velocidade=(0, 200), vida =100, limites_mov=(1000, 1000, 200, 600), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
 
@@ -98,7 +98,11 @@ grupoInimigo.add(enemy01, enemy02, enemy03)
     
 
 while main:
-    print(pygame.display.get_desktop_sizes())
+    print("rectPLayer", jogador.rect)
+    print("posPLayer", jogador.posicao)
+
+    
+    #print(pygame.display.get_desktop_sizes())
     deltaTime = clock.tick(60)/1000
     if deltaTime>1.0:
         deltaTime=1.0
@@ -106,11 +110,11 @@ while main:
     tecla = pygame.key.get_pressed()
     
     if len(grupoInimigo) == 0:
-        novoInim = Inimigo(i=0, dt=deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
+        novoInim = Inimigo(i=0, dt=deltaTime, pos=(670, 200), velocidade=(700, 700), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
         grupoInimigo.add(novoInim)
         #print(vars(novoInim))
     
-    print(grupoInimigo)
+    #print(grupoInimigo)
     
     #HUD da vida
     hp = f"Vida: {jogador.vida}"
@@ -148,7 +152,7 @@ while main:
                 sys.exit()
                 main=False
         if event.type == createItem:
-            print("criar")
+            #print("criar")
             x = random.randint(200,bgWidth-200)
             y = -200
             itemSpawnado = itemGeral(
@@ -160,7 +164,7 @@ while main:
         if event.type == create_escudo:
             if jogador.armadura < 100:
                 if len(grupoEscudo) < 6:
-                    print("escudo")
+                    #print("escudo")
                     x = random.randint(200,bgWidth-200)
                     y = -200
                     escudoSpawnado = ParteEscudo(
@@ -172,7 +176,7 @@ while main:
 #Criar o powerUP:
         if event.type == create_powerup:
             if len(grupoPowerUP) == 0:
-                print("PowerUP")
+                #print("PowerUP")
                 x = random.randint(200,bgWidth-200)
                 y = -200
                 powerupSpawnado = PowerUP(
@@ -295,7 +299,7 @@ while main:
         scroll=0
 
 #mover camera
-    camera-=(0,6)
+    #camera-=(0,6)
 
 #Colocar as novas HUDs na tela:
     tela.blit(hp_form, (18, 18))
