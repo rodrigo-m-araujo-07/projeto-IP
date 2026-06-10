@@ -16,6 +16,7 @@ class Jogador(pygame.sprite.Sprite):
         
         super().__init__()
         
+        self.tamanhoMapa = tamanhoMapa
         self.deltaTime = dt
         self.images = []
         self.sheet = pygame.image.load(spriteImage).convert_alpha()
@@ -161,20 +162,20 @@ class Bala(pygame.sprite.Sprite):
 
     def mov(self, camera):
         #print(self.dire)
-        self.posicao.x += (self.dire.x - camera.x) * self.dt
-        self.posicao.y += (self.dire.y - camera.y) *self.dt
+        self.posicao.x += (self.dire.x + camera.x) * self.dt
+        self.posicao.y += (self.dire.y + camera.y) *self.dt
         #print(self.fix_dir)
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
         #print(self.rect.center)
         
         
-    def update(self, dt, camera):
+    def update(self, dt, camera, playerPos):
         self.mov(camera)
         self.dt = dt
         #self.dt = clock.tick(60)/1000
         #if self.dt>1.0:
         #    self.dt=1.0
-        if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
+        if abs(playerPos.x-self.posicao.x) >= 3000 or abs(playerPos.y-self.posicao.y) >= 3000:
             self.kill()
             #print("Dead")

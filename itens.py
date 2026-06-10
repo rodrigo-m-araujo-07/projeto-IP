@@ -37,10 +37,9 @@ class itemGeral(pygame.sprite.Sprite):
         return animacoes
     
     def movimentacao(self, camera):
-        self.posicao.x+=camera.x
-        self.posicao.y+=camera.y
-        self.rect.centerx = self.posicao.x*self.dt
-        self.rect.centery = self.posicao.y*self.dt
+        self.posicao.y+=500*self.dt
+        self.rect.centerx = self.posicao.x
+        self.rect.centery = self.posicao.y
         
     def update(self, dt, camera):
         self.dt = dt
