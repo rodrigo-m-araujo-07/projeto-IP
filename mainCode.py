@@ -100,13 +100,11 @@ while main:
         deltaTime=1.0
     #Salvar tecla apertada
     tecla = pygame.key.get_pressed()
+    
     if len(grupoInimigo) == 0:
-        enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
-        enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
-        enemy03 = Inimigo(2, deltaTime, pos=(1200, 400), velocidade=(0, 200), vida =100, limites_mov=(1000, 1000, 200, 600), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
-        grupoInimigo.add(enemy01, enemy02, enemy03)
-        print("ADICIONA"), print(grupoInimigo)
-    #vida    
+        grupoInimigo.add(Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3))
+    
+    #HUD da vida
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
 
@@ -308,6 +306,7 @@ while main:
 
     #checa os inimigos ativos para disparar
     for enemy in grupoInimigo:
+        print(enemy)
         if enemy.disparo:
             if enemy.tipo_bala == "follow": 
                 bullet = Bullet(
@@ -342,8 +341,7 @@ while main:
         elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
             enemy.timer_disparo()
 
-        if enemy.rect.centery >= 1000:
-            enemy.kill()
+        
                 
     print(grupoInimigo), print("OLHA AQ EM CIMA KRL"), print(len(grupoInimigo))
             
@@ -419,11 +417,15 @@ while main:
             enemy.kill()
             jogador.add_kill()
 
+        if enemy.rect.topright[1] >= 1000:
+            enemy.kill()
+
     #flip atualiza a tela
     pygame.display.update()
     pygame.display.flip()
     clock.tick(fps)
-    print(f"INTERVALO DO TIRO ATUAL {intervalo_tiro}")
+    
+    
 
 
     

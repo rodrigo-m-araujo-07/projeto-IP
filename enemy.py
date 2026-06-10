@@ -163,34 +163,24 @@ class Bullet(pygame.sprite.Sprite):
             #print("AQUI porra"),print(self.dire)
 
 
-
-    def mov(self):
-        self.posicao.x += self.dire.x * self.dt
-        self.posicao.y += self.dire.y *self.dt
-        #atualiza a posição atual
-        self.rect.centerx = self.posicao.x
-        self.rect.centery = self.posicao.y
-
-        #caso especial do bigger
-        print(self.tipo), print("OLHA AQ EM CIMA AGR")
-        if self.tipo == "bigger":
-            print("aumenta")
-            deltax = int(self.rect.bottomright[0] - self.rect.bottomleft[0])
-            deltay = int(math.fabs(self.rect.bottomleft[1] - self.rect.topleft[1]))
-            if deltax < 300 and deltay < 300:    
-                self.image = pygame.transform.scale(self.image, (int(deltax*1.02), int(deltay*1.02)))
-                self.rect = self.rect.scale_by(1.02, 1.02)
-
     def mov(self, camera):
         #if self.tipo == "follow":    
             #print(self.dire)
             self.posicao.x += (self.dire.x - camera.x) * self.dt
             self.posicao.y += (self.dire.y - camera.y) *self.dt
-            #print(self.fix_dir)
+            #atualiza a posicao atual
             self.rect.centerx = self.posicao.x
             self.rect.centery = self.posicao.y
-            #print(self.rect.center)
-        #elif self.tipo == "rajada":
+            
+            #caso especial do bigger
+            
+            if self.tipo == "bigger":
+                print("aumenta")
+                deltax = int(self.rect.bottomright[0] - self.rect.bottomleft[0])
+                deltay = int(math.fabs(self.rect.bottomleft[1] - self.rect.topleft[1]))
+                if deltax < 300 and deltay < 300:    
+                    self.image = pygame.transform.scale(self.image, (int(deltax*1.02), int(deltay*1.02)))
+                    self.rect = self.rect.scale_by(1.02, 1.02)
 
 
     def mudar_disparo(self):
