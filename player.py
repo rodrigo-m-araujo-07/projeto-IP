@@ -7,14 +7,13 @@ import math
 clock = pygame.time.Clock()
 folderPath = os.path.dirname(os.path.abspath(__file__))
 
-tamanhoMapa = (1360,800)
-
 class Jogador(pygame.sprite.Sprite):
     
-    def __init__(self, spriteImage, posInicial, dt):
+    def __init__(self, spriteImage, posInicial, dt, tamanhoMapa):
         
         super().__init__()
         
+        self.tamanhoMapa = tamanhoMapa
         self.deltaTime = dt
         self.images = []
         self.sheet = pygame.image.load(spriteImage).convert_alpha()
@@ -72,12 +71,12 @@ class Jogador(pygame.sprite.Sprite):
         nextPosY = (self.posicao.y + self.direction.y * self.velocidade * self.deltaTime)# - 6 colocar movimentação padrão do player
         print("nextPosX", nextPosX)
         print("nextPosY", nextPosY)        
-        if nextPosX >= self.rect[2]/3 and nextPosX <= (tamanhoMapa[0])-self.rect[2]/3:
+        if nextPosX >= self.rect[2]/3 and nextPosX <= (self.tamanhoMapa[0])-self.rect[2]/3:
             self.posicao.x = nextPosX
             self.rect.centerx = self.posicao.x
-        print("tamanho", tamanhoMapa)
-        print("tamanho+", tamanhoMapa[1]+camera.y)
-        if nextPosY <= (tamanhoMapa[1])-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
+        print("tamanho", self.tamanhoMapa)
+        print("tamanho+", self.tamanhoMapa[1]+camera.y)
+        if nextPosY <= (self.tamanhoMapa[1])-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
             self.posicao.y = nextPosY+2
             self.rect.centery = self.posicao.y
         
@@ -160,20 +159,20 @@ class Bala(pygame.sprite.Sprite):
 
     def mov(self, camera):
         #print(self.dire)
-        self.posicao.x += (self.dire.x - camera.x) * self.dt
-        self.posicao.y += (self.dire.y - camera.y) *self.dt
+        self.posicao.x += (self.dire.x + camera.x) * self.dt
+        self.posicao.y += (self.dire.y + camera.y) *self.dt
         #print(self.fix_dir)
         self.rect.centerx = self.posicao.x
         self.rect.centery = self.posicao.y
         #print(self.rect.center)
         
         
-    def update(self, dt, camera):
+    def update(self, dt, camera, playerPos):
         self.mov(camera)
         self.dt = dt
         #self.dt = clock.tick(60)/1000
         #if self.dt>1.0:
         #    self.dt=1.0
-        if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
+        if abs(playerPos.x-self.posicao.x) >= 3000 or abs(playerPos.y-self.posicao.y) >= 3000:
             self.kill()
-            print("Dead")
+            print("disappear")
