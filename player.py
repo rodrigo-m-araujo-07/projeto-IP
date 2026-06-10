@@ -5,11 +5,12 @@ import math
 #tamanhoTela:tuple = pygame.display.get_desktop_sizes()[0]
 
 clock = pygame.time.Clock()
-folderPath = os.path.dirname(os.path.abspath(__file__))
-
-tamanhoMapa = (1360,800)
 
 class Jogador(pygame.sprite.Sprite):
+    
+    folderPath = os.path.dirname(os.path.abspath(__file__))
+
+    tamanhoMapa = (1360,800)
     
     def __init__(self, spriteImage, posInicial, dt):
         
@@ -51,9 +52,9 @@ class Jogador(pygame.sprite.Sprite):
                 sprite = sheet.subsurface(pygame.Rect(x,y, larguraSprite, alturaSprite))
                 sprite = pygame.transform.scale(sprite, (240, 240))
                 animacoes["run"].append(sprite)
-                print(animacoes), print()
+                #print(animacoes), #print()
 
-        #print(animacoes)
+        ##print(animacoes)
         return animacoes
             
     def getDirection(self):
@@ -65,19 +66,19 @@ class Jogador(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
     
     def movimentacao(self, camera):
-        print("pos", self.posicao)
-        print("rect", self.rect)
-        print("camera", camera)
+        #print("pos", self.posicao)
+        #print("rect", self.rect)
+        #print("camera", camera)
         nextPosX = self.posicao.x + self.direction.x * self.velocidade * self.deltaTime
         nextPosY = (self.posicao.y + self.direction.y * self.velocidade * self.deltaTime)# - 6 colocar movimentação padrão do player
-        print("nextPosX", nextPosX)
-        print("nextPosY", nextPosY)        
-        if nextPosX >= self.rect[2]/3 and nextPosX <= (tamanhoMapa[0])-self.rect[2]/3:
+        #print("nextPosX", nextPosX)
+        #print("nextPosY", nextPosY)        
+        if nextPosX >= self.rect[2]/3 and nextPosX <= (self.tamanhoMapa[0])-self.rect[2]/3:
             self.posicao.x = nextPosX
             self.rect.centerx = self.posicao.x
-        print("tamanho", tamanhoMapa)
-        print("tamanho+", tamanhoMapa[1]+camera.y)
-        if nextPosY <= (tamanhoMapa[1])-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
+        #print("tamanho", tamanhoMapa)
+        #print("tamanho+", tamanhoMapa[1]+camera.y)
+        if nextPosY <= (self.tamanhoMapa[1])-self.rect[3]/4: #nextPosY >= self.rect[3]/4 and
             self.posicao.y = nextPosY+2
             self.rect.centery = self.posicao.y
         
@@ -91,7 +92,7 @@ class Jogador(pygame.sprite.Sprite):
                 self.invencibilidade = False
             else:
                 self.invencibilidade = True
-        #print(self.invencibilidade)
+        ##print(self.invencibilidade)
         elif tipo == "PU":
             if self.powerUp:
                 self.powerUp = False
@@ -108,7 +109,7 @@ class Jogador(pygame.sprite.Sprite):
         elif tipo == "PU":
             if self.powerUp:
                 self.image = self.animacoes["run"][2]
-                print("VOLTA NORMAL KRL")
+                #print("VOLTA NORMAL KRL")
             else:
                 self.image = self.animacoes["run"][6]
             #if self.invencibilidade: seria p mudar tb se pegar o pu enquanto no dano --acho paia
@@ -125,10 +126,10 @@ class Jogador(pygame.sprite.Sprite):
 #Bala do player:
 class Bala(pygame.sprite.Sprite):
     def __init__(self, image, posicao, dt):
-        #print("teste 1")
+        ##print("teste 1")
         super().__init__()
         self.dt = dt
-        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", "bullet.png")).convert_alpha()
+        self.image = pygame.image.load(os.path.join(self.folderPath, "images", "enemy", "bullet.png")).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.centerx = posicao[0]
         self.rect.centery = posicao[1]
@@ -141,7 +142,7 @@ class Bala(pygame.sprite.Sprite):
         
         
     def direcao(self, posA, posB):
-        #print(posA)
+        ##print(posA)
        # print()
        # print(posB)
         dx = (posA[0] - posB[0])
@@ -176,4 +177,4 @@ class Bala(pygame.sprite.Sprite):
         #    self.dt=1.0
         if self.rect.centerx >= 1360 or self.rect.centerx <= 0 or self.rect.centery <= 0 or self.rect.centery >= 800:
             self.kill()
-            print("Dead")
+            #print("Dead")
