@@ -223,7 +223,7 @@ while main:
         
         if event.type == create_bala0:
             for enemy in grupoInimigo:
-                if enemy.tipo_bala == "follow":
+                if enemy.tipo_bala == "follow" :
                     enemy.disparo=1
 
         if event.type == create_bala1:
@@ -346,7 +346,7 @@ while main:
         #print(enemy)
         #print("pos", enemy.posicao)
         #print("rect", enemy.rect)
-        if (enemy.disparo) and tempo_de_jogo > 0.5:
+        if (enemy.disparo) and  enemy.rect.bottomleft[1] >15:
             if enemy.tipo_bala == "follow": 
                 bullet = Bullet(
                     os.path.join(folderPath, "images", "enemy", "bullet.png"),
