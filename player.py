@@ -9,10 +9,8 @@ clock = pygame.time.Clock()
 class Jogador(pygame.sprite.Sprite):
     
     folderPath = os.path.dirname(os.path.abspath(__file__))
-
-    tamanhoMapa = (1360,800)
     
-    def __init__(self, spriteImage, posInicial, dt):
+    def __init__(self, spriteImage, posInicial, dt, tamanhoMapa):
         
         super().__init__()
         
@@ -126,6 +124,7 @@ class Jogador(pygame.sprite.Sprite):
         self.movimentacao(camera)
 #Bala do player:
 class Bala(pygame.sprite.Sprite):
+    folderPath = os.path.dirname(os.path.abspath(__file__))
     def __init__(self, image, posicao, dt):
         ##print("teste 1")
         super().__init__()
