@@ -56,6 +56,8 @@ create_Moeda = pygame.USEREVENT + 3
 pygame.time.set_timer(create_Moeda, 4000)
 create_Cura = pygame.USEREVENT + 4
 pygame.time.set_timer(create_Cura, 6000)
+create_enemyBullet = pygame.USEREVENT + 5
+pygame.time.set_timer(create_enemyBullet, 1000)
 
 #cria grupos
 grupoItem = pygame.sprite.Group()
@@ -102,12 +104,15 @@ while main:
         deltaTime=1.0
     #Salvar tecla apertada
     tecla = pygame.key.get_pressed()
-    if len(grupoInimigo) == 0:
-        enemy01 = Inimigo(0, deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
-        enemy02 = Inimigo(1, deltaTime, pos=(600, 200), velocidade=(300, 0), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada", dDisparo=5)
-        enemy03 = Inimigo(2, deltaTime, pos=(1200, 400), velocidade=(0, 200), vida =100, limites_mov=(1000, 1000, 200, 600), sentido_inicial="L", tipo_bala="bigger", dDisparo=10)
     
-    #vida    
+    if len(grupoInimigo) == 0:
+        novoInim = Inimigo(i=0, dt=deltaTime, pos=(670, 200), velocidade=(500, 500), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="0", tipo_bala = "follow", dDisparo=3)
+        grupoInimigo.add(novoInim)
+        #print(vars(novoInim))
+    
+    print(grupoInimigo)
+    
+    #HUD da vida
     hp = f"Vida: {jogador.vida}"
     hp_form = fonte.render(hp, False, (255, 255, 255))
 
@@ -201,6 +206,11 @@ while main:
                 if powerup_ativo:
                     intervalo_tiro = cooldown_especial
                     powerup_t_inicio = perf_counter()
+        
+        if event.type == create_enemyBullet:
+            #print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            for enemy in grupoInimigo:
+                enemy.disparo=1
     #colisão player item
     pygame.sprite.spritecollide(jogador, grupoItem, True)
     
@@ -236,7 +246,7 @@ while main:
         if tempo_passado >= 5: #dura 5 segundos
             jogador.player_update("PU")
             intervalo_tiro = cooldown_normal
-            print("MUDOU ESSA CARALHA")
+            #print("MUDOU ESSA CARALHA")
 
 #curas coletado:
     cura_coletados = []
@@ -268,7 +278,7 @@ while main:
         # identifica o tipo de item recebido
         if isinstance(item, Moedas):
             jogador.moedas += item.valor
-            print('Moeda recebida')
+            #print('Moeda recebida')
 
         elif isinstance(item, Cura):
             jogador.vida += item.valor
@@ -309,6 +319,9 @@ while main:
 
     #checa os inimigos ativos para disparar
     for enemy in grupoInimigo:
+        #print(enemy)
+        print("pos", enemy.posicao)
+        print("rect", enemy.rect)
         if enemy.disparo:
             if enemy.tipo_bala == "follow": 
                 bullet = Bullet(
@@ -318,7 +331,7 @@ while main:
                     tipo = "follow"
                 )
                 grupoBullets.add(bullet)
-                bullet.direcao((jogador.rect.center), (enemy01.rect.center), pow)
+                bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             elif enemy.tipo_bala == "rajada":
                 for pow in range(5):    
                     bullet = Bullet(
@@ -328,7 +341,7 @@ while main:
                         tipo = "rajada",
                     )
                     grupoBullets.add(bullet)
-                    bullet.direcao((jogador.rect.center), (enemy02.rect.center), pow)
+                    bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             elif enemy.tipo_bala == "bigger":
                 bullet = Bullet(
                     os.path.join(folderPath, "images", "enemy", "bullet.png"),
@@ -338,20 +351,40 @@ while main:
                 )
                 grupoBullets.add(bullet)
                 bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
-            enemy.timer_disparo()
-            
-
-
-
-        elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
-            enemy.timer_disparo()
-                
-            
+            enemy.disparo=0
+            #enemy.timer_disparo()
+        #elif perf_counter() - enemy.t_disparo >= enemy.dDisparo:
+        #    enemy.timer_disparo()
 
         
-
+                
+    #print(grupoInimigo), print("OLHA AQ EM CIMA KRL"), print(len(grupoInimigo))
     
-    #Colisão do disparo do inimigo com a hitbox do player
+    #update de tudo
+    grupoJogador.update(deltaTime, camera)
+    grupoInimigo.update(deltaTime, camera)
+    grupoBullets.update(deltaTime, camera)
+    grupoBala.update(deltaTime, camera)
+    grupoPowerUP.update(deltaTime, camera)
+    grupoEscudo.update(deltaTime, camera)
+    grupoMoeda.update(deltaTime, camera)
+    grupoCura.update(deltaTime, camera)
+    #print(grupoBullets)
+    
+    #desenha tudo na tela
+    #grupoJogador.draw(tela)
+    #grupoItem.draw(tela)
+    grupoInimigo.draw(tela)
+    grupoBullets.draw(tela)
+    grupoBala.draw(tela)
+    grupoPowerUP.draw(tela)
+    grupoEscudo.draw(tela) 
+    grupoMoeda.draw(tela)
+    grupoCura.draw(tela)
+    
+    #print("rectJogador", jogador.rect)
+
+#Colisão do disparo do inimigo com a hitbox do player
     colisao_b = False
     for bala in grupoBullets:
         if jogador.hitbox.colliderect(bala.rect):
@@ -373,7 +406,7 @@ while main:
 
     if not jogador.invencibilidade:
         grupoJogador.draw(tela)
-        print("OK")
+        #print("OK")
     else:
         if perf_counter() - t_clicks < jogador.tempoPiscar:
             grupoJogador.draw(tela)
@@ -392,38 +425,21 @@ while main:
             enemy.vida -= 20
             #print(f"Inimigo: {enemy01.vida}")
         if enemy.vida <= 0:
+            #print("morreu")
             enemy.kill()
             jogador.add_kill()
 
-    #update de tudo
-    grupoJogador.update(deltaTime, camera)
-    grupoInimigo.update(deltaTime, camera)
-    grupoBullets.update(deltaTime, camera)
-    grupoBala.update(deltaTime, camera, jogador.posicao)
-    grupoPowerUP.update(deltaTime, camera)
-    grupoEscudo.update(deltaTime, camera)
-    grupoMoeda.update(deltaTime, camera)
-    grupoCura.update(deltaTime, camera)
-    #print(grupoBullets)
-    
-    #desenha tudo na tela
-    #grupoJogador.draw(tela)
-    #grupoItem.draw(tela)
-    grupoInimigo.draw(tela)
-    grupoBullets.draw(tela)
-    grupoBala.draw(tela)
-    grupoPowerUP.draw(tela)
-    grupoEscudo.draw(tela) 
-    grupoMoeda.draw(tela)
-    grupoCura.draw(tela)
-    
-    print("rectJogador", jogador.rect)
+        if enemy.rect.topright[1] >= 1000:
+            print("morreu", enemy.posicao, enemy.rect)#erro sprite tá aqui, o rect tá sendo jogado pra muito longe da pos, provavelmente pela lógica da camera,
+                                                      #e isso resulta em o inimigo morrer pelo seu rect ser jogado pra casa do caralho antes de qq coisa
+            enemy.kill()
 
     #flip atualiza a tela
     pygame.display.update()
     pygame.display.flip()
     clock.tick(fps)
-    print(f"INTERVALO DO TIRO ATUAL {intervalo_tiro}")
+    
+    
 
 
     
