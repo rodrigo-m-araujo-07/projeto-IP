@@ -119,11 +119,29 @@ class Jogador(pygame.sprite.Sprite):
     def add_kill(self):
         self.kills += 1
 
-
     def update(self,dt,camera):
         self.deltaTime = dt
         self.getDirection()
         self.movimentacao(camera)
+
+#Rastro do player que vai ser usado no Bullet Time
+class DuplicataFantasma(pygame.sprite.Sprite):
+    def __init__(self, image, rect):
+        super().__init__()
+        #criar uma cópia da imagem pra não mexer no jogador
+        self.image = image.copy()
+        self.rect = rect.copy()
+        self.image.fill((50, 150, 255), special_flags=pygame.BLEND_RGB_ADD)
+        self.alpha = 80 
+        self.image.set_alpha(self.alpha)
+
+    def update(self, dt, camera):
+        self.alpha -= 250 * dt 
+        if self.alpha <= 0:
+            self.kill() # Destrói o fantasma quando ficar invisível
+        else:
+            self.image.set_alpha(self.alpha)
+
 #Bala do player:
 class Bala(pygame.sprite.Sprite):
     folderPath = os.path.dirname(os.path.abspath(__file__))
