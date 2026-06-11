@@ -6,7 +6,7 @@ clock = pygame.time.Clock()
 
 class Inimigo(pygame.sprite.Sprite):
     
-    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala, dDisparo):
+    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala):
         
         super().__init__()
         folderPath = os.path.dirname(os.path.abspath(__file__))
@@ -26,16 +26,16 @@ class Inimigo(pygame.sprite.Sprite):
         self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
         self.sentido_inicial = sentido_inicial
         self.tipo_bala = tipo_bala
-        self.disparo = 0
-        self.dDisparo = dDisparo #intervalo entre os disparos
+        self.disparo = 1
+        #self.dDisparo = dDisparo #intervalo entre os disparos
         self.t_disparo = 0
 
-    def timer_disparo(self):
+    """def timer_disparo(self):
         self.t_disparo = perf_counter()
         if self.disparo == 0:
             self.disparo = 1
         else:
-            self.disparo = 0
+            self.disparo = 0"""
     
 
     def _mudar_sentido(self):
@@ -46,30 +46,22 @@ class Inimigo(pygame.sprite.Sprite):
         
 
     def dir(self):
-        """"keys = pygame.key.get_pressed()
-        if keys[pygame.K_l]:
-            self.posicao.x += self.velocidade
-        if keys[pygame.K_j]:
-            self.posicao.x -= self.velocidade
-        if keys[pygame.K_k]:
-            self.posicao.y += self.velocidade
-        if keys[pygame.K_i]:
-            self.posicao.y += self.velocidade
-
-        #print(self.posicao)"""
         
         ##print(self.posicao) #trocar isso aqui por um timer fixo (subir por x segundos, direita por y segundos, etc)
-        if self.velocidadex != 0 and self.velocidadey!=0:
-            if self.posicao.y <= self.limites_mov[2] and self.posicao.x <= self.limites_mov[1]:
-                self.posicao.x += self.velocidadex * self.dt
-            elif self.posicao.y >= self.limites_mov[3] and self.posicao.x >= self.limites_mov[0]:
-                self.posicao.x -= self.velocidadex * self.dt
-            elif self.posicao.x <= self.limites_mov[0] and self.posicao.y >= self.limites_mov[2]:
-                self.posicao.y -= (self.velocidadey - 600) * self.dt
-            elif self.posicao.x >= self.limites_mov[1] and self.posicao.y <= self.limites_mov[3]:
-                self.posicao.y += self.velocidadey * self.dt
+        #if self.velocidadex != 0 and self.velocidadey!=0:
+        if self.posicao.x >= self.limites_mov[1]:
+            self._mudar_sentido()
+        elif self.posicao.x <= self.limites_mov[0]:
+            self._mudar_sentido()
 
-        elif self.velocidadex != 0:
+        if self.sentido_inicial == "R":
+            self.posicao.x += self.velocidadex * self.dt
+        elif self.sentido_inicial == "L":
+            self.posicao.x -= self.velocidadex * self.dt
+        
+        self.posicao.y -= self.velocidadey * self.dt
+
+        """elif self.velocidadex != 0:
             if self.posicao.x >= self.limites_mov[1]:
                 self._mudar_sentido()
             elif self.posicao.x <= self.limites_mov[0]:
@@ -78,9 +70,9 @@ class Inimigo(pygame.sprite.Sprite):
             if self.sentido_inicial == "R":
                 self.posicao.x += self.velocidadex * self.dt
             elif self.sentido_inicial == "L":
-                self.posicao.x -= self.velocidadex * self.dt
+                self.posicao.x -= self.velocidadex * self.dt"""
 
-        elif self.velocidadey != 0:
+        """elif self.velocidadey != 0:
             if self.posicao.y >= self.limites_mov[3]:
                 self._mudar_sentido()
             elif self.posicao.y <= self.limites_mov[2]:
@@ -89,7 +81,7 @@ class Inimigo(pygame.sprite.Sprite):
             if self.sentido_inicial == "R":
                 self.posicao.y += self.velocidadey * self.dt
             elif self.sentido_inicial == "L":
-                self.posicao.y -= self.velocidadey * self.dt
+                self.posicao.y -= self.velocidadey * self.dt"""
                 #print("DESCE CARALHO PORRA")
 
             #print(f"POSICAO DESSE CORNO {self.posicao}")
