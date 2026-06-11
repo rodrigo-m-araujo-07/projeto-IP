@@ -75,3 +75,10 @@ class Cura(itemGeral):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posInicial)
         self.valor = 10
+class charge(itemGeral):
+    def __init__(self, spriteImage, posInicial):
+        super().__init__(spriteImage, posInicial)
+        self.image = pygame.image.load(spriteImage).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (64, 64))
+        self.rect = self.image.get_rect(center=posInicial)
+        self.valor = 10

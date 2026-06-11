@@ -46,23 +46,26 @@ jogador = Jogador(
 createItem = 999
 
 create_escudo = pygame.USEREVENT + 1
-pygame.time.set_timer(create_escudo, 4000)
-create_powerup = pygame.USEREVENT + 2
-pygame.time.set_timer(create_powerup, 6000)
+pygame.time.set_timer(create_escudo, 8000)
+create_quickshot = pygame.USEREVENT + 2
+pygame.time.set_timer(create_quickshot, 12000)
+create_charge = pygame.USEREVENT + 3
+pygame.time.set_timer(create_charge, 1200)
 
 timerItem = pygame.time.set_timer(createItem, 3000)
 
 create_Moeda = pygame.USEREVENT + 3
-pygame.time.set_timer(create_Moeda, 4000)
+pygame.time.set_timer(create_Moeda, 3000)
 create_Cura = pygame.USEREVENT + 4
-pygame.time.set_timer(create_Cura, 6000)
+pygame.time.set_timer(create_Cura, 7000)
 create_enemyBullet = pygame.USEREVENT + 5
 pygame.time.set_timer(create_enemyBullet, 1000)
 
 #cria grupos
 grupoItem = pygame.sprite.Group()
 grupoEscudo = pygame.sprite.Group()
-grupoPowerUP = pygame.sprite.Group()
+grupoQuickShot = pygame.sprite.Group()
+grupoBulletTime = pygame.sprite.Group()
 grupoCura = pygame.sprite.Group()
 grupoMoeda = pygame.sprite.Group()
 grupoBala = pygame.sprite.Group()
@@ -88,6 +91,7 @@ intervalo_tiro = cooldown_normal
 ultimo_tiro = 0
 powerup_t_inicio = 0
 duracao =  5
+
 
 #Mudei a criação dos personagens pra fora do loop main pra poder fazer com que o inimigo morre
 #criar personagens
@@ -162,7 +166,6 @@ while main:
 #Criar o escudo:
         if event.type == create_escudo:
             if jogador.armadura < 100:
-                if len(grupoEscudo) < 6:
                     #print("escudo")
                     x = random.randint(200,bgWidth-200)
                     y = -200
@@ -173,8 +176,7 @@ while main:
                     grupoEscudo.add(escudoSpawnado)
 
 #Criar o powerUP:
-        if event.type == create_powerup:
-            if len(grupoPowerUP) == 0:
+        if event.type == create_quickshot:
                 #print("PowerUP")
                 x = random.randint(200,bgWidth-200)
                 y = -200
@@ -182,10 +184,9 @@ while main:
                     spriteImage=os.path.join(folderPath,'images', 'Items', 'PoweUP.png'),
                     posInicial=(x, y),
                 )
-                grupoPowerUP.add(powerupSpawnado)
+                grupoQuickShot.add(powerupSpawnado)
 #cria cura
         if event.type == create_Cura:
-            if len(grupoCura) < 4:
                 x = random.randint(200,bgWidth-200)
                 y = -200
                 cura = Cura(
@@ -234,7 +235,7 @@ while main:
 
 #PowerUP coletado:
     powerup_coletados = []
-    for powerup in grupoPowerUP:
+    for powerup in grupoQuickShot:
         if jogador.hitbox.colliderect(powerup.rect):
             powerup_coletados.append(powerup)
             powerup.kill()
@@ -372,7 +373,7 @@ while main:
     grupoInimigo.update(deltaTime, camera)
     grupoBullets.update(deltaTime, camera, jogador.posicao)
     grupoBala.update(deltaTime, camera, jogador.posicao)
-    grupoPowerUP.update(deltaTime, camera)
+    grupoQuickShot.update(deltaTime, camera)
     grupoEscudo.update(deltaTime, camera)
     grupoMoeda.update(deltaTime, camera)
     grupoCura.update(deltaTime, camera)
@@ -384,7 +385,7 @@ while main:
     grupoInimigo.draw(tela)
     grupoBullets.draw(tela)
     grupoBala.draw(tela)
-    grupoPowerUP.draw(tela)
+    grupoQuickShot.draw(tela)
     grupoEscudo.draw(tela) 
     grupoMoeda.draw(tela)
     grupoCura.draw(tela)

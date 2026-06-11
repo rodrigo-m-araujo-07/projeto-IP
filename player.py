@@ -38,10 +38,10 @@ class Jogador(pygame.sprite.Sprite):
         self.armadura = 0
         self.kills = 0
         self.quick_shot = False
-        self.bullet_time = False
         self.charge = 0
+        self.bullet_time = False
         
-    
+
     def fatiar_spritesheet(self,sheet):
         larguraSprite=24
         alturaSprite=24
