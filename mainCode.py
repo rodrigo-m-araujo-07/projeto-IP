@@ -168,7 +168,7 @@ while main:
 #HUD da carga:
     cargas = f"cargas:"
     cargas_form = fonte.render(cargas, False, (255, 215, 0))
-    carga_icon = pygame.image.load(os.path.join(folderPath,'images','items', 'pixil-frame-0.png')).convert_alpha()
+    carga_icon = pygame.image.load(os.path.join(folderPath,'images','items', 'icon das cargas.png')).convert_alpha()
     carga_icon = pygame.transform.scale(carga_icon, (30, 30))
 
 # =============================================================================
