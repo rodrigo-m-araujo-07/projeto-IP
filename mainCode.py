@@ -241,10 +241,17 @@ while main:
 # Abrir loja usando a tecla "L"
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_l:
-                jogador.quick_shot = abrir_loja(tela, clock, jogador, jogador.quick_shot, jogador.bullet_time)
+                jogador.quick_shot, tempo_pausado = abrir_loja(tela, clock, jogador, jogador.quick_shot, jogador.bullet_time)
+                inicio_de_jogo += tempo_pausado
+                ultimo_tiro += tempo_pausado
+                if jogador.invencibilidade:
+                    t_invencibilidade += tempo_pausado
+                    t_clicks += tempo_pausado
                 if jogador.quick_shot:
+                    quick_shot_t_inicio += tempo_pausado
                     intervalo_tiro = cooldown_especial
-                    quick_shot_t_inicio = perf_counter()
+                if jogador.bullet_time:
+                    tempo_inicio += tempo_pausado
 # =============================================================================
         
 # =============================================================================
@@ -321,7 +328,7 @@ while main:
             jogador.quick_shot = False
             #print("MUDOU ESSA CARALHA")
 # =============================================================================
-#Pegar o Charge:
+#Pegar a Carga:
     charges_coletados = []
     for carga in grupoBulletTime:
         if jogador.hitbox.colliderect(carga.rect):

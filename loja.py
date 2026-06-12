@@ -1,12 +1,13 @@
 import pygame
 import sys
 import os
-
+from time import perf_counter
 # ==========================================
 # 1. CONFIGURAÇÕES INICIAIS E JANELA
 # ==========================================
 
 def abrir_loja(tela, relogio, jogador, powerup_ativo, bullet_time_ativo):
+    tempo_de_entrada = perf_counter()
 
     LARGURA, ALTURA = tela.get_size()
 
@@ -227,5 +228,7 @@ def abrir_loja(tela, relogio, jogador, powerup_ativo, bullet_time_ativo):
         # Atualiza a tela e trava a taxa de quadros em 60 FPS
         pygame.display.flip()
         relogio.tick(60)
+    tempo_saida = perf_counter()
+    tempo_pausado =  tempo_saida - tempo_de_entrada
  
-    return powerup_ativo
+    return powerup_ativo, tempo_pausado
