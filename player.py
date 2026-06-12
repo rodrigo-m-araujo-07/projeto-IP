@@ -38,6 +38,7 @@ class Jogador(pygame.sprite.Sprite):
         self.armadura = 0
         self.kills = 0
         self.powerUp = False
+        self.moedas = 0
         
     
     def fatiar_spritesheet(self,sheet):
@@ -84,18 +85,18 @@ class Jogador(pygame.sprite.Sprite):
         #Hitbox 2:
         self.hitbox.center = self.rect.center
     
-    def player_update(self, tipo):
+    def invencibilidade_update(self, tipo):
         self.image_update(tipo)
-        if tipo == "D":
-            if self.invencibilidade:
-                self.invencibilidade = False
-            else:
-                self.invencibilidade = True
+        if self.invencibilidade:
+            self.invencibilidade = False
+        else:
+            self.invencibilidade = True
         ##print(self.invencibilidade)
-        elif tipo == "PU":
-            if self.powerUp:
-                self.powerUp = False
-            else: self.powerUp = True
+    def power_up(self, tipo):
+        self.image_update(tipo)
+        if self.powerUp:
+            self.powerUp = False
+        else: self.powerUp = True
 
     def image_update(self, tipo): #animação 2-default, animação 10-dano, animação 4-dano+PU, animação 6-PU
         if tipo == "D":    

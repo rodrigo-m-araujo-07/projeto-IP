@@ -6,26 +6,32 @@ clock = pygame.time.Clock()
 
 class Inimigo(pygame.sprite.Sprite):
     
-    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala):
+    def __init__(self, i, dt, pos, limites_mov, sentido_inicial):
         
         super().__init__()
         folderPath = os.path.dirname(os.path.abspath(__file__))
-        self.imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png", "quadrado_roxo.png")
+        #padrao de dados inimigos --> (imagem, velocidade(x, y), vida)
+        self.inimigos = { 
+                        0 : {"imagem" :"retangulo_vermelho.png", "velocidade": (600, 250), "vida" :200, "bala": "follow"}, 
+                        1:{"imagem" :"hexagono_amarelo.png", "velocidade": (500, 250), "vida" :300, "bala": "rajada"}, 
+                        2:{"imagem" :"quadrado_roxo.png", "velocidade": (800, 200), "vida" :100, "bala": "bigger"},
+                        3:(0)
+                        }
         self.dt = dt
-        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", self.imagens[i])).convert_alpha()
+        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", self.inimigos[i]["imagem"])).convert_alpha()
         #print(self.imagens[i])
         self.rect = self.image.get_rect()
         #print(self.rect)
         self.rect.centerx = pos[0]
         self.rect.centery = pos[1]
-        self.velocidadex = velocidade[0]
-        self.velocidadey = velocidade[1]
+        self.velocidadex = self.inimigos[i]["velocidade"][0]
+        self.velocidadey = self.inimigos[i]["velocidade"][1]
         self.direcao = pygame.Vector2()
         self.posicao = pygame.Vector2(self.rect.centerx, self.rect.centery)
-        self.vida = vida
+        self.vida = self.inimigos[i]["vida"]
         self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
         self.sentido_inicial = sentido_inicial
-        self.tipo_bala = tipo_bala
+        self.tipo_bala = self.inimigos[i]["bala"]
         self.disparo = 1
         #self.dDisparo = dDisparo #intervalo entre os disparos
         self.t_disparo = 0

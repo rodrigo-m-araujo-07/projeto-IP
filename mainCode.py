@@ -73,16 +73,16 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 
 main = True
-enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), velocidade=(700, 250), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="L", tipo_bala = "follow")
-enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200), velocidade=(300, 250), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada")
-enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), velocidade=(800, 200), vida =100, limites_mov=(200, 1100, 200, 600), sentido_inicial="L", tipo_bala="bigger")
+enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), limites_mov=(500, 1000, 200, 600), sentido_inicial="L")
+enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200), limites_mov=(200, 1000, 200, 200), sentido_inicial="R")
+enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), limites_mov=(200, 1100, 200, 600), sentido_inicial="L")
 
 
 #Novas variáveis do tiro:
 inicio_de_jogo = perf_counter ()
 
 # qtd. moedas inicial
-jogador.moedas = 0
+#jogador.moedas = 0 passei p dentro do innit do player
 
 cooldown_normal = 0.35
 cooldown_especial = 0.15
@@ -115,12 +115,10 @@ while main:
         dir = ("R", "L")
         typ = ("follow", "rajada", "bigger")
         coordenadas = (random.randint(600, 1000), -200)
-        velocid = (random.randint(500, 700), random.randint(200, 250))
-        hp = random.randint(200, 500)
         lim = (random.randint(300, 500), random.randint(800, 1200))
         x = random.randint(0, 1)
-        t = random.randint(0, 2)
-        novoInim =  Inimigo(0, deltaTime, pos=coordenadas, velocidade=velocid, vida=hp, limites_mov=lim, sentido_inicial=dir[x], tipo_bala = typ[t])
+        valor_i = random.randint(0, 2)
+        novoInim =  Inimigo(valor_i, deltaTime, pos=coordenadas, limites_mov=lim, sentido_inicial=dir[x])
         grupoInimigo.add(novoInim)
         #print(vars(novoInim))
     
@@ -260,7 +258,7 @@ while main:
             powerup_coletados.append(powerup)
             powerup.kill()
     if powerup_coletados:
-        jogador.player_update("PU")
+        jogador.power_up("PU")
         powerup_t_inicio = perf_counter()
         intervalo_tiro = cooldown_especial
 
@@ -268,7 +266,7 @@ while main:
     if jogador.powerUp:
         tempo_passado = perf_counter() - powerup_t_inicio
         if tempo_passado >= 5: #dura 5 segundos
-            jogador.player_update("PU")
+            jogador.power_up("PU")
             intervalo_tiro = cooldown_normal
             #print("MUDOU ESSA CARALHA")
 
@@ -424,7 +422,7 @@ while main:
             jogador.vida -= 20
         else:
             jogador.armadura -= 20
-        jogador.player_update("D")
+        jogador.invencibilidade_update("D")
         t_invencibilidade = perf_counter()
         t_clicks = perf_counter()
 
@@ -438,7 +436,7 @@ while main:
             t_clicks = perf_counter()
 
     if jogador.invencibilidade and (perf_counter() - t_invencibilidade) >= 3:
-        jogador.player_update("D")
+        jogador.invencibilidade_update("D")
 
     #Colisão tiro dos players com o inimigo e sua morte:
     #print(f"Inimigo: {enemy01.vida}")
