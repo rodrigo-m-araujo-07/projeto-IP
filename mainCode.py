@@ -237,6 +237,7 @@ while main:
                 grupoBulletTime.add(charge)
 # =============================================================================
 
+
 # =============================================================================
 # Abrir loja usando a tecla "L"
         if event.type == pygame.KEYDOWN:
@@ -253,7 +254,8 @@ while main:
                 if jogador.bullet_time:
                     tempo_inicio += tempo_pausado
 # =============================================================================
-        
+
+
 # =============================================================================
         if event.type == create_bala0:
             for enemy in grupoInimigo:

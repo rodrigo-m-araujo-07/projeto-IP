@@ -230,5 +230,5 @@ def abrir_loja(tela, relogio, jogador, powerup_ativo, bullet_time_ativo):
         relogio.tick(60)
     tempo_saida = perf_counter()
     tempo_pausado =  tempo_saida - tempo_de_entrada
- 
+
     return powerup_ativo, tempo_pausado
