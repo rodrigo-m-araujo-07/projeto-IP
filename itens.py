@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 
+# =============================================================================
 class itemGeral(pygame.sprite.Sprite):
     
     def __init__(self, spriteImage, posInicial):
@@ -44,8 +45,9 @@ class itemGeral(pygame.sprite.Sprite):
     def update(self, dt, camera):
         self.dt = dt
         self.movimentacao(camera)
+# =============================================================================
         
-
+# =============================================================================
 class Moedas(itemGeral):
     def __init__(self, spriteImage, posInicial):
         super().__init__(spriteImage, posInicial)
@@ -53,14 +55,18 @@ class Moedas(itemGeral):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posInicial)
         self.valor = 1
+# =============================================================================
 
+# =============================================================================
 class ParteEscudo(itemGeral):
     def __init__(self, spriteImage, posInicial):
         super().__init__(spriteImage, posInicial)
         self.image = pygame.image.load(spriteImage).convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posInicial)
+# =============================================================================
 
+# =============================================================================
 class Cura(itemGeral):
     def __init__(self, spriteImage, posInicial):
         super().__init__(spriteImage, posInicial)
@@ -68,14 +74,18 @@ class Cura(itemGeral):
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posInicial)
         self.valor = 10
+# =============================================================================
 
+# =============================================================================
 class Quick_Shot(itemGeral):
     def __init__(self, spriteImage, posInicial):
         super().__init__(spriteImage, posInicial)
         self.image = pygame.image.load(spriteImage).convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(center=posInicial)
+# =============================================================================
 
+# =============================================================================
 class Charge(itemGeral):
     def __init__(self, spriteImage, posInicial):
         super().__init__(spriteImage, posInicial)

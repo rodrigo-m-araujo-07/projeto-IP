@@ -6,6 +6,7 @@ import math
 
 clock = pygame.time.Clock()
 
+# =============================================================================
 class Jogador(pygame.sprite.Sprite):
     
     folderPath = os.path.dirname(os.path.abspath(__file__))
@@ -124,8 +125,9 @@ class Jogador(pygame.sprite.Sprite):
         self.getDirection()
         self.movimentacao(camera)
 
+# =============================================================================
 #Rastro do player que vai ser usado no Bullet Time
-class DuplicataFantasma(pygame.sprite.Sprite):
+class Rastro_Bullet_Time(pygame.sprite.Sprite):
     def __init__(self, image, rect):
         super().__init__()
         #criar uma cópia da imagem pra não mexer no jogador
@@ -141,6 +143,7 @@ class DuplicataFantasma(pygame.sprite.Sprite):
             self.kill() # Destrói o fantasma quando ficar invisível
         else:
             self.image.set_alpha(self.alpha)
+# =============================================================================
 
 #Bala do player:
 class Bala(pygame.sprite.Sprite):
@@ -198,3 +201,4 @@ class Bala(pygame.sprite.Sprite):
         if abs(playerPos.x-self.posicao.x) >= 3000 or abs(playerPos.y-self.posicao.y) >= 3000:
             self.kill()
             #print("Dead")
+# =============================================================================
