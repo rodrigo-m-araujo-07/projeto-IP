@@ -44,11 +44,11 @@ jogador = Jogador(
         #grupos=self.all_sprites,
         #game=self
     )
-enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), limites_mov=(500, 1000, 200, 600), sentido_inicial="L")
-enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200),limites_mov=(200, 1000, 200, 200), sentido_inicial="R")
-enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), limites_mov=(200, 1100, 200, 600), sentido_inicial="L")
+enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), limites_mov=(500, 1000,), sentido_inicial="L")
+enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200),limites_mov=(200, 1000,), sentido_inicial="R")
+enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), limites_mov=(200, 1100,), sentido_inicial="L")
+enemy04 = Inimigo(i=3, dt=deltaTime, pos=(400, -200), limites_mov=(200, 1100), sentido_inicial="R")
 # =============================================================================
-
 # =============================================================================
 # EVENTOS - SPAWNS
 # =============================================================================
@@ -68,11 +68,12 @@ pygame.time.set_timer(create_quickshot, 12000)
 create_charge = pygame.USEREVENT + 5
 pygame.time.set_timer(create_charge, 8500)
 #eventos de disparo para cada tipo de bala
-deltaDisparos = {"follow": 1000, "rajada": 3000, "bigger": 5000}
-create_bala0, create_bala1, create_bala2 = pygame.USEREVENT + 6,  pygame.USEREVENT + 7, pygame.USEREVENT + 8
-pygame.time.set_timer(create_bala0, deltaDisparos["follow"]), pygame.time.set_timer(create_bala1, deltaDisparos["rajada"]), pygame.time.set_timer(create_bala2, deltaDisparos["bigger"])
+deltaDisparos = {"follow": 1000, "rajada": 3000, "bigger": 5000, "tracker": 5000}
+create_bala0, create_bala1, create_bala2, create_bala3 = pygame.USEREVENT + 6,  pygame.USEREVENT + 7, pygame.USEREVENT + 8, pygame.USEREVENT + 9
+pygame.time.set_timer(create_bala0, deltaDisparos["follow"]), pygame.time.set_timer(create_bala1, deltaDisparos["rajada"]), pygame.time.set_timer(create_bala2, deltaDisparos["bigger"]), pygame.time.set_timer(create_bala3, deltaDisparos["tracker"])
 # =============================================================================
-
+mudar_direcao = pygame.USEREVENT + 10
+pygame.time.set_timer(mudar_direcao, 1000)
 # =============================================================================
 #cria grupos
 # =============================================================================
@@ -89,7 +90,7 @@ grupoInimigo = pygame.sprite.Group()
 grupoBullets = pygame.sprite.Group()
 # =============================================================================
 grupoJogador.add(jogador)
-grupoInimigo.add(enemy01, enemy02, enemy03)
+grupoInimigo.add(enemy01, enemy02, enemy03, enemy04)
 # =============================================================================
 
 
@@ -275,6 +276,13 @@ while main:
             for enemy in grupoInimigo:
                 if enemy.tipo_bala == "bigger":
                     enemy.disparo=1
+        if event.type == create_bala3:
+            for enemy in grupoInimigo:
+                if enemy.tipo_bala == "tracker":
+                    enemy.disparo=1
+        mudar = 0
+        if event.type == mudar_direcao:
+            mudar = 1
 # =============================================================================
 
     #colisão player item
@@ -446,7 +454,7 @@ while main:
                 bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
 # =============================================================================
             elif enemy.tipo_bala == "rajada":
-                for pow in range(5):    
+                for pow in range(7):    
                     bullet = Bullet(
                         os.path.join(folderPath, "images", "enemy", "bullet.png"),
                         (enemy.rect.centerx,enemy.rect.centery),
@@ -463,6 +471,15 @@ while main:
                     dt=deltaTime,
                     tipo = "bigger"
                 )
+# =============================================================================
+            elif enemy.tipo_bala == "tracker":
+                bullet = Bullet(
+                os.path.join(folderPath, "images", "enemy", "bullet.png"),
+                (enemy.rect.centerx,enemy.rect.centery),
+                dt=deltaTime,
+                tipo = "tracker" 
+                )
+
                 grupoBullets.add(bullet)
                 bullet.direcao((jogador.rect.center), (enemy.rect.center), pow)
             enemy.disparo=0
@@ -487,7 +504,7 @@ while main:
 # =============================================================================
     #update de tudo
     grupoInimigo.update(dt_jogo, camera)
-    grupoBullets.update(dt_jogo, camera, jogador.posicao)
+    grupoBullets.update(dt_jogo, camera, jogador.posicao, mudar)
     grupoBala.update(dt_jogo, camera, jogador.posicao)
     grupoRastro.update(deltaTime, camera) #Update do rastro
     grupoQuickShot.update(dt_jogo, camera)
