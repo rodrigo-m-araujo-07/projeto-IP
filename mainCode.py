@@ -44,9 +44,9 @@ jogador = Jogador(
         #grupos=self.all_sprites,
         #game=self
     )
-enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), velocidade=(700, 250), vida=200, limites_mov=(500, 1000, 200, 600), sentido_inicial="L", tipo_bala = "follow")
-enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200), velocidade=(300, 250), vida=300, limites_mov=(200, 1000, 200, 200), sentido_inicial="R", tipo_bala="rajada")
-enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), velocidade=(800, 200), vida =100, limites_mov=(200, 1100, 200, 600), sentido_inicial="L", tipo_bala="bigger")
+enemy01 = Inimigo(i =0, dt=deltaTime, pos=(750, -200), limites_mov=(500, 1000, 200, 600), sentido_inicial="L")
+enemy02 = Inimigo(i=1, dt=deltaTime, pos=(600, -200),limites_mov=(200, 1000, 200, 200), sentido_inicial="R")
+enemy03 = Inimigo(i=2, dt=deltaTime, pos=(650, -200), limites_mov=(200, 1100, 200, 600), sentido_inicial="L")
 # =============================================================================
 
 # =============================================================================
@@ -130,14 +130,11 @@ while main:
     
     if len(grupoInimigo) == 0:
         dir = ("R", "L")
-        typ = ("follow", "rajada", "bigger")
         coordenadas = (random.randint(600, 1000), -200)
-        velocid = (random.randint(500, 700), random.randint(200, 250))
-        hp = random.randint(200, 500)
         lim = (random.randint(300, 500), random.randint(800, 1200))
         x = random.randint(0, 1)
         t = random.randint(0, 2)
-        novoInim =  Inimigo(0, deltaTime, pos=coordenadas, velocidade=velocid, vida=hp, limites_mov=lim, sentido_inicial=dir[x], tipo_bala = typ[t])
+        novoInim =  Inimigo(t, deltaTime, pos=coordenadas, limites_mov=lim, sentido_inicial=dir[x])
         grupoInimigo.add(novoInim)
         #print(vars(novoInim))
     #print(grupoInimigo)

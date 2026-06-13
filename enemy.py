@@ -1,34 +1,39 @@
 import pygame
 import os
 import math #para deixar o código mais claro durante as operações matemáticas
-from time import perf_counter
+#from time import perf_counter
 clock = pygame.time.Clock()
+inimigos_data = {
+            0: {"imagem" : "retangulo_vermelho.png", "velocidade" :(700, 250), "vida" : 200, "bala" : "follow"}, 
+            1: {"imagem" : "hexagono_amarelo2.png", "velocidade" : (300, 250), "vida": 300, "bala": "rajada"},
+            2: {"imagem" : "quadrado_roxo.png", "velocidade": (800, 200), "vida": 100, "bala": "bigger"}
+            }
 
 class Inimigo(pygame.sprite.Sprite):
     
-    def __init__(self, i, dt, pos, velocidade, vida, limites_mov, sentido_inicial, tipo_bala):
+    def __init__(self, i, dt, pos, limites_mov, sentido_inicial):
         
         super().__init__()
         folderPath = os.path.dirname(os.path.abspath(__file__))
-        self.imagens = ("retangulo_vermelho.png", "hexagono_amarelo2.png", "quadrado_roxo.png")
+        
         self.dt = dt
-        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", self.imagens[i])).convert_alpha()
+        self.image = pygame.image.load(os.path.join(folderPath, "images", "enemy", inimigos_data[i]["imagem"])).convert_alpha()
         #print(self.imagens[i])
         self.rect = self.image.get_rect()
         #print(self.rect)
         self.rect.centerx = pos[0]
         self.rect.centery = pos[1]
-        self.velocidadex = velocidade[0]
-        self.velocidadey = velocidade[1]
+        self.velocidadex = inimigos_data[i]["velocidade"][0]
+        self.velocidadey = inimigos_data[i]["velocidade"][1]
         self.direcao = pygame.Vector2()
         self.posicao = pygame.Vector2(self.rect.centerx, self.rect.centery)
-        self.vida = vida
+        self.vida = inimigos_data[i]["vida"]
         self.limites_mov = limites_mov #padrão --> (x0, x1, y0, y1)
         self.sentido_inicial = sentido_inicial
-        self.tipo_bala = tipo_bala
+        self.tipo_bala = inimigos_data[i]["bala"]
         self.disparo = 1
         #self.dDisparo = dDisparo #intervalo entre os disparos
-        self.t_disparo = 0
+        #self.t_disparo = 0
 
     """def timer_disparo(self):
         self.t_disparo = perf_counter()
